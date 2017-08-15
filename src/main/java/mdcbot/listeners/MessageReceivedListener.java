@@ -6,6 +6,9 @@ import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
+import java.util.Random;
+import java.util.function.Consumer;
+
 /**
  * Just a test listener which prints every message to the console
  */
@@ -50,5 +53,19 @@ public class MessageReceivedListener extends ListenerAdapter
         if(isBot) userName = "BOT:" + userName;
 
         MDCBot.LOG.info("(" + guildName + ")[" + channelName + "]<" + userName + ">: " + messageText);
+
+
+
+        if(messageText.equals("hello"))
+            channel.sendMessage("Hello!").queue();
+        else if(messageText.equals("roll"))
+        {
+            int roll = new Random().nextInt(6) + 1;
+            channel.sendMessage("Your roll: " + roll).queue(message1 ->
+            {
+                if(roll < 3)
+                    channel.sendMessage("Ohh that was a bit of a low roll...").queue();
+            });
+        }
     }
 }
