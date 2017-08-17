@@ -26,7 +26,7 @@ public class MDCBot
         Example: https://github.com/DV8FromTheWorld/JDA/blob/master/src/examples/java/MessageListenerExample.java
 
         My Token: MzQ2NzQ0MDY2OTg3MjYxOTYy.DHOTrg.LlAqQw3ZdC8LT4fNhREcp-Ae0gM
-        My User ID:
+        My User ID: 106346651777507328
     */
 
     public static final String NAME = "MDCBot";
@@ -92,10 +92,6 @@ public class MDCBot
         client.setPrefix(Config.get("prefix"));
         client.addCommands(commands.toArray(new Command[commands.size()]));
 
-        //Find logs channel
-        List<TextChannel> logChannels = jda.getTextChannelsByName(Config.get("logChannelName"), false);
-        if(! logChannels.isEmpty()) logChannel = logChannels.get(0);
-
         try
         {
             jda = new JDABuilder(AccountType.BOT)
@@ -112,6 +108,10 @@ public class MDCBot
         {
             e.printStackTrace();
         }
+
+        //Find logs channel
+        List<TextChannel> logChannels = jda.getTextChannelsByName(Config.get("logChannelName"), false);
+        if(! logChannels.isEmpty()) logChannel = logChannels.get(0);
 
         LOG.info("Initialisation complete");
     }

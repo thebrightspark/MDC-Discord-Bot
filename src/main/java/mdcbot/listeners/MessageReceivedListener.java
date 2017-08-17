@@ -57,7 +57,7 @@ public class MessageReceivedListener extends ListenerAdapter
 
 
         if(messageText.equals("hello"))
-            channel.sendMessage("Hello!").queue();
+            channel.sendMessage("Hello " + user.getAsMention() + "!").queue();
         else if(messageText.equals("roll"))
         {
             int roll = new Random().nextInt(6) + 1;

@@ -32,7 +32,6 @@ public class Config
         {
             try
             {
-                MDCBot.CONFIG_FILE.mkdirs();
                 if(!MDCBot.CONFIG_FILE.createNewFile())
                     MDCBot.LOG.error("Couldn't create config.properties");
             }
