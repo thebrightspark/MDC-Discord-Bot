@@ -10,8 +10,8 @@ public class CommandHello extends CommandBase
     }
 
     @Override
-    protected void execute(CommandEvent event)
+    protected void doCommand(CommandEvent event)
     {
-
+        event.reply("Hello " + event.getAuthor().getAsMention() + "!");
     }
 }

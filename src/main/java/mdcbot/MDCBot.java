@@ -2,8 +2,9 @@ package mdcbot;
 
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
+import com.jagrosh.jdautilities.commandclient.examples.PingCommand;
 import com.jagrosh.jdautilities.waiter.EventWaiter;
-import mdcbot.listeners.MessageReceivedListener;
+import mdcbot.command.CommandHello;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -18,6 +19,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.List;
 
 public class MDCBot
 {
@@ -39,6 +41,7 @@ public class MDCBot
 
     public static JDA jda;
     public static Logger LOG = Logger.getLogger(NAME);
+    public static String PREFIX;
     public static TextChannel logChannel;
     public static EventWaiter waiter = new EventWaiter();
 
@@ -61,11 +64,14 @@ public class MDCBot
     {
         if(!commands.add(command))
             LOG.warn("Tried to add duplicate command! Command not added: " + command.getName());
+        else
+            LOG.info("Added command '" + command.getName() + "'");
     }
 
     public static void initCommands()
     {
-
+        addCommand(new CommandHello());
+        addCommand(new PingCommand());
     }
 
     public static void main(String... args)
@@ -84,12 +90,14 @@ public class MDCBot
             System.exit(0);
         }
 
+        PREFIX = Config.get("prefix");
+
         initCommands();
 
         CommandClientBuilder client = new CommandClientBuilder();
         client.useDefaultGame();
         client.setOwnerId(Config.get("ownerID"));
-        client.setPrefix(Config.get("prefix"));
+        client.setPrefix(PREFIX);
         client.addCommands(commands.toArray(new Command[commands.size()]));
 
         try
@@ -100,8 +108,8 @@ public class MDCBot
                     .setGame(Game.of("Loading..."))
                     .addEventListener(
                             client.build(),
-                            waiter,
-                            new MessageReceivedListener())
+                            waiter) //,
+                            //new MessageReceivedListener())
                     .buildBlocking();
         }
         catch(LoginException | InterruptedException | RateLimitedException e)

@@ -9,7 +9,7 @@ public class Config
 {
     private static Map<String, String> config = new HashMap<>();
 
-    private static void add(String configKey, String configValue)
+    public static void set(String configKey, String configValue)
     {
         config.put(configKey, configValue);
     }
@@ -46,10 +46,10 @@ public class Config
         if(config.isEmpty())
         {
             //Init config
-            add("token", "");
-            add("ownerID", "");
-            add("prefix", "!");
-            add("logChannelName", "logs");
+            set("token", "");
+            set("ownerID", "");
+            set("prefix", "!");
+            set("logChannelName", "logs");
 
             save();
         }
