@@ -1,17 +1,33 @@
 package mdcbot;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 public class Config
 {
+    private static final List<String> finalKeys = Arrays.asList("token", "ownerID");
     private static Map<String, String> config = new HashMap<>();
 
-    public static void set(String configKey, String configValue)
+    public static boolean canModify(String key)
     {
-        config.put(configKey, configValue);
+        return !finalKeys.contains(key);
+    }
+
+    public static boolean needsRestart(String key)
+    {
+        return key.equals("prefix");
+    }
+
+    public static String set(String configKey, String configValue)
+    {
+        String output = config.put(configKey, configValue);
+        save();
+        return output;
+    }
+
+    public static String setInternal(String configKey, String configValue)
+    {
+        return config.put(configKey, configValue);
     }
 
     public static String get(String configKey)
@@ -46,10 +62,10 @@ public class Config
         if(config.isEmpty())
         {
             //Init config
-            set("token", "");
-            set("ownerID", "");
-            set("prefix", "!");
-            set("logChannelName", "logs");
+            setInternal("token", "");
+            setInternal("ownerID", "");
+            setInternal("prefix", "!");
+            setInternal("logChannelName", "logs");
 
             save();
         }

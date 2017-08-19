@@ -2,9 +2,10 @@ package mdcbot;
 
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
-import com.jagrosh.jdautilities.commandclient.examples.PingCommand;
 import com.jagrosh.jdautilities.waiter.EventWaiter;
+import mdcbot.command.CommandConfig;
 import mdcbot.command.CommandHello;
+import mdcbot.listeners.Listener;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -70,8 +71,9 @@ public class MDCBot
 
     public static void initCommands()
     {
+        //addCommand(new PingCommand());
         addCommand(new CommandHello());
-        addCommand(new PingCommand());
+        addCommand(new CommandConfig());
     }
 
     public static void main(String... args)
@@ -108,7 +110,8 @@ public class MDCBot
                     .setGame(Game.of("Loading..."))
                     .addEventListener(
                             client.build(),
-                            waiter) //,
+                            waiter,
+                            new Listener()) //,
                             //new MessageReceivedListener())
                     .buildBlocking();
         }
