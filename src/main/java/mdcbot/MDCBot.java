@@ -5,6 +5,7 @@ import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
 import com.jagrosh.jdautilities.waiter.EventWaiter;
 import mdcbot.command.CommandConfig;
 import mdcbot.command.CommandHello;
+import mdcbot.command.CommandRandQuote;
 import mdcbot.listeners.Listener;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
@@ -76,6 +77,7 @@ public class MDCBot
         //addCommand(new PingCommand());
         addCommand(new CommandHello());
         addCommand(new CommandConfig());
+        addCommand(new CommandRandQuote());
     }
 
     public static void main(String... args)
