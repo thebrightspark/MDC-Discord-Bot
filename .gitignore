@@ -1,3 +1,4 @@
 #IntelliJ Idea
 .idea/
 *.iml
+config.properties

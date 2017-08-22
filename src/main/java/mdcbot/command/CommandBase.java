@@ -36,8 +36,13 @@ public abstract class CommandBase extends Command
     @Override
     protected void execute(CommandEvent event)
     {
-        debug(event, "Executing command: " + event.getMessage().getContent());
-        doCommand(event);
+        if(!MDCBot.isCommandDisabled(name))
+        {
+            debug(event, "Executing command '%s'", event.getMessage().getContent());
+            doCommand(event);
+        }
+        else
+            debug(event, "Command '%s' is disabled", event.getMessage().getContent());
     }
 
     protected abstract void doCommand(CommandEvent event);
@@ -59,7 +64,7 @@ public abstract class CommandBase extends Command
     private void log(CommandEvent event, LogLevel level, String text, Object... args)
     {
         String logText = String.format(text, args);
-        Util.log(level, text);
+        Util.log(level, text, args);
         if(MDCBot.logChannel != null)
         {
             EmbedBuilder message = new EmbedBuilder();

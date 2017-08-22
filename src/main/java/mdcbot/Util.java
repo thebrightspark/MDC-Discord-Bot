@@ -31,4 +31,12 @@ public class Util
     {
         log(LogLevel.DEBUG, text, args);
     }
+
+    public static String listAsCommaSeperatedString(Object[] objects)
+    {
+        StringBuilder sb = new StringBuilder(objects[0].toString());
+        for(int i = 1; i < objects.length; i++)
+            sb.append(",").append(objects[i].toString());
+        return sb.toString();
+    }
 }

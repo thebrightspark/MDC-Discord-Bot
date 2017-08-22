@@ -46,6 +46,8 @@ public class MDCBot
     public static TextChannel logChannel;
     public static EventWaiter waiter = new EventWaiter();
 
+    private static List<String> disabledCommands = new ArrayList<>();
+
     static
     {
         //Set log4j configuration file
@@ -81,31 +83,34 @@ public class MDCBot
         LOG.info("Initialising bot...");
 
         Config.init();
-        if(!Config.has("ownerID"))
+        if(!Config.hasValue(EConfigs.OWNER_ID))
         {
-            LOG.error("Config value 'ownerID' has not been set!");
+            LOG.error("Config value '" + EConfigs.OWNER_ID + "' has not been set!");
             System.exit(0);
         }
-        if(!Config.has("token"))
+        if(!Config.hasValue(EConfigs.TOKEN))
         {
-            LOG.error("Config value 'token' has not been set!");
+            LOG.error("Config value '" + EConfigs.TOKEN + "' has not been set!");
             System.exit(0);
         }
 
-        PREFIX = Config.get("prefix");
+        PREFIX = Config.get(EConfigs.PREFIX);
+
+        //Populate disabledCommands list from config
+        reloadDisabledCommands();
 
         initCommands();
 
         CommandClientBuilder client = new CommandClientBuilder();
         client.useDefaultGame();
-        client.setOwnerId(Config.get("ownerID"));
+        client.setOwnerId(Config.get(EConfigs.OWNER_ID));
         client.setPrefix(PREFIX);
         client.addCommands(commands.toArray(new Command[commands.size()]));
 
         try
         {
             jda = new JDABuilder(AccountType.BOT)
-                    .setToken(Config.get("token"))
+                    .setToken(Config.get(EConfigs.TOKEN))
                     .setStatus(OnlineStatus.DO_NOT_DISTURB)
                     .setGame(Game.of("Loading..."))
                     .addEventListener(
@@ -121,9 +126,34 @@ public class MDCBot
         }
 
         //Find logs channel
-        List<TextChannel> logChannels = jda.getTextChannelsByName(Config.get("logChannelName"), false);
+        List<TextChannel> logChannels = jda.getTextChannelsByName(Config.get(EConfigs.LOG_CHANNEL_NAME), false);
         if(! logChannels.isEmpty()) logChannel = logChannels.get(0);
 
         LOG.info("Initialisation complete");
+    }
+
+    public static void reloadDisabledCommands()
+    {
+        String dCommandsConfig = Config.get(EConfigs.DISABLED_COMMANDS);
+        disabledCommands.clear();
+        if(dCommandsConfig != null && !dCommandsConfig.trim().isEmpty())
+        {
+            String[] dCommands = dCommandsConfig.split(",");
+            for(String dc : dCommands)
+                disabledCommands.add(dc.trim());
+        }
+    }
+
+    public static boolean isCommandDisabled(String name)
+    {
+        return disabledCommands.contains(name);
+    }
+
+    public static boolean doesCommandExist(String name)
+    {
+        for(Command command : commands)
+            if(command.getName().equalsIgnoreCase(name))
+                return true;
+        return false;
     }
 }

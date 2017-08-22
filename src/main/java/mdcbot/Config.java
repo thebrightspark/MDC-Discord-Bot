@@ -5,39 +5,71 @@ import java.util.*;
 
 public class Config
 {
-    private static final List<String> finalKeys = Arrays.asList("token", "ownerID");
     private static Map<String, String> config = new HashMap<>();
 
-    public static boolean canModify(String key)
+    public static String set(EConfigs configKey, String configValue)
     {
-        return !finalKeys.contains(key);
-    }
-
-    public static boolean needsRestart(String key)
-    {
-        return key.equals("prefix");
-    }
-
-    public static String set(String configKey, String configValue)
-    {
-        String output = config.put(configKey, configValue);
+        String output = setInternal(configKey, configValue);
         save();
+        if(configKey == EConfigs.DISABLED_COMMANDS)
+            MDCBot.reloadDisabledCommands();
         return output;
     }
 
-    public static String setInternal(String configKey, String configValue)
+    /**
+     * Sets the value to the config key
+     * @return the old value
+     */
+    public static String setInternal(EConfigs configKey, String configValue)
     {
-        return config.put(configKey, configValue);
+        String output;
+        if(configKey.canHaveMultipleValues)
+        {
+            String existing = get(configKey);
+            if(existing == null || existing.trim().isEmpty())
+                //If nothing set, then just set to the value
+                output = config.put(configKey.toString(), configValue);
+            else
+            {
+                ArrayList<String> existingValues = new ArrayList<>(Arrays.asList(existing.split(",")));
+                if(existingValues.contains(configValue))
+                {
+                    //If the value exists, then remove it
+                    existingValues.remove(configValue);
+                    if(existingValues.isEmpty())
+                        output = config.put(configKey.toString(), "");
+                    else
+                    {
+                        StringBuilder sb = new StringBuilder(existingValues.get(0));
+                        for(int i = 1; i < existingValues.size(); i++)
+                            sb.append(existingValues.get(i));
+                        output = config.put(configKey.toString(), sb.toString());
+                    }
+                }
+                else
+                    //If the value doesn't exist, then add it
+                    output = config.put(configKey.toString(), existing + "," + configValue);
+            }
+        }
+        else
+            //If the config doesn't have multiple values, then just set it normally
+            output = config.put(configKey.toString(), configValue);
+        return output;
     }
 
-    public static String get(String configKey)
+    public static String get(EConfigs configKey)
     {
-        return config.get(configKey);
+        return config.get(configKey.toString());
     }
 
-    public static boolean has(String configKey)
+    public static boolean has(EConfigs configKey)
     {
-        return config.containsKey(configKey);
+        return config.containsKey(configKey.toString());
+    }
+
+    public static boolean hasValue(EConfigs configKey)
+    {
+        return has(configKey) && !config.get(configKey.toString()).trim().isEmpty();
     }
 
     public static void init()
@@ -50,6 +82,7 @@ public class Config
             {
                 if(!MDCBot.CONFIG_FILE.createNewFile())
                     MDCBot.LOG.error("Couldn't create config.properties");
+                MDCBot.LOG.info("Created new config.properties");
             }
             catch(IOException e)
             {
@@ -62,10 +95,8 @@ public class Config
         if(config.isEmpty())
         {
             //Init config
-            setInternal("token", "");
-            setInternal("ownerID", "");
-            setInternal("prefix", "!");
-            setInternal("logChannelName", "logs");
+            for(EConfigs c : EConfigs.values())
+                setInternal(c, c.defaultValue);
 
             save();
         }
