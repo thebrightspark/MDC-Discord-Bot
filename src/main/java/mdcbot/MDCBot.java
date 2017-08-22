@@ -183,16 +183,18 @@ public class MDCBot
     public static boolean isMemberBotAdmin(Member member)
     {
         for(Role role : member.getRoles())
-            if(adminRoles.contains(role.getName()))
-                return true;
+            for(String modRole : adminRoles)
+                if(modRole.equalsIgnoreCase(role.getName()))
+                    return true;
         return false;
     }
 
     public static boolean isMemberBotModerator(Member member)
     {
         for(Role role : member.getRoles())
-            if(moderatorRoles.contains(role.getName()))
+            for(String modRole : moderatorRoles)
+                if(modRole.equalsIgnoreCase(role.getName()))
                 return true;
-        return false;
+        return isMemberBotAdmin(member);
     }
 }
