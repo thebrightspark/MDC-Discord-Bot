@@ -39,4 +39,8 @@ public class Util
             sb.append(",").append(objects[i].toString());
         return sb.toString();
     }
+
+    public static String[] splitCommandArgs(String args){
+        return args.split("\\s");
+    }
 }

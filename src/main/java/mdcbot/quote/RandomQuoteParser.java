@@ -36,14 +36,16 @@ public class RandomQuoteParser {
         }
     }
 
-    List<Integer> intlist = new ArrayList<>(3);
+    List<Integer> intlist = new ArrayList<>();
     Random random = new Random();
     public String getRandomQuote(){
         int randint = random.nextInt(this.quotes.size()-1);
-        if(intlist.contains(randint)){
-            randint = random.nextInt(this.quotes.size()-1);
+        while(intlist.size() <= 3) {
+            if (intlist.contains(randint)) {
+                randint = random.nextInt(this.quotes.size() - 1);
+            }
+            intlist.add(randint);
         }
-        intlist.add(randint);
         return this.quotes.get(randint);
     }
 }

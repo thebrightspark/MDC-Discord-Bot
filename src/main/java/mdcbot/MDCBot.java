@@ -4,15 +4,18 @@ import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
 import com.jagrosh.jdautilities.waiter.EventWaiter;
 import mdcbot.command.CommandConfig;
+import mdcbot.command.CommandGetPoints;
 import mdcbot.command.CommandHello;
 import mdcbot.command.CommandRandQuote;
 import mdcbot.listeners.Listener;
+import mdcbot.points.UserPoints;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
 import org.apache.log4j.Logger;
 
@@ -49,6 +52,9 @@ public class MDCBot
 
     private static List<String> disabledCommands = new ArrayList<>();
 
+    public static List<User> users;
+    public static UserPoints points;
+
     static
     {
         //Set log4j configuration file
@@ -78,6 +84,7 @@ public class MDCBot
         addCommand(new CommandHello());
         addCommand(new CommandConfig());
         addCommand(new CommandRandQuote());
+        addCommand(new CommandGetPoints());
     }
 
     public static void main(String... args)
@@ -102,6 +109,7 @@ public class MDCBot
         reloadDisabledCommands();
 
         initCommands();
+
 
         CommandClientBuilder client = new CommandClientBuilder();
         client.useDefaultGame();
@@ -130,6 +138,14 @@ public class MDCBot
         //Find logs channel
         List<TextChannel> logChannels = jda.getTextChannelsByName(Config.get(EConfigs.LOG_CHANNEL_NAME), false);
         if(! logChannels.isEmpty()) logChannel = logChannels.get(0);
+
+        users = jda.getUsers();
+        Iterator<User> iterator = users.iterator();
+        while(iterator.hasNext()){
+            User u = iterator.next();
+            points = new UserPoints();
+            points.addOrSubPoints(u, 5, false);
+        }
 
         LOG.info("Initialisation complete");
     }
