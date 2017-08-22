@@ -17,10 +17,13 @@ public class CommandManagePoints extends CommandBase{
                 if(user.getId().equals(args[1])) {
                     int points = Integer.parseInt(args[2]);
                     MDCBot.points.addOrSubPoints(user, points, !args[0].equalsIgnoreCase("add") && args[0].equalsIgnoreCase("remove"));
-                    int r = MDCBot.points.remainders;
-                    event.reply(MDCBot.jda.getUserById(Long.parseLong(args[1])) + " had " + r + " points " +
-                            (args[0].equalsIgnoreCase("add") ? "added" : (args[0].equalsIgnoreCase("remove") ? "removed" : null))
+                    event.reply(MDCBot.jda.getUserById(Long.parseLong(args[1])) + " had " + points + " points " +
+                            (args[0].equalsIgnoreCase("add") ? "added" : (args[0].equalsIgnoreCase("remove") ? "removed" : null)) +
+                            " and now has " + MDCBot.points.getUsersPoints(user) + " points."
                     );
+                    user.openPrivateChannel().queue((channel)->{
+                        channel.sendMessage("You now have " + MDCBot.points.getUsersPoints(user) + " points. If you believe this is a problem, please contact an admin.").queue();
+                    });
                 }
             }else if(args.length == 2){
                 if(args[0].equalsIgnoreCase("get")) {
