@@ -47,10 +47,10 @@ public class MDCBot
     public static TextChannel logChannel;
     public static EventWaiter waiter = new EventWaiter();
 
-    private static List<String> disabledCommands = new ArrayList<>();
-
+    public static List<Command> commands = new ArrayList<>();
     public static List<User> users;
-    public static UserPoints points;
+
+    private static List<String> disabledCommands = new ArrayList<>();
 
     static
     {
@@ -64,8 +64,6 @@ public class MDCBot
             e.printStackTrace();
         }
     }
-
-    public static List<Command> commands = new ArrayList<>();
 
     private static void addCommand(Command command)
     {
@@ -137,12 +135,8 @@ public class MDCBot
         if(! logChannels.isEmpty()) logChannel = logChannels.get(0);
 
         users = jda.getUsers();
-        Iterator<User> iterator = users.iterator();
-        while(iterator.hasNext()){
-            User u = iterator.next();
-            points = new UserPoints();
-            points.addOrSubPoints(u, 5, false);
-        }
+        for(User user : users)
+            UserPoints.addOrSubPoints(user, 5, false);
 
         LOG.info("Initialisation complete");
     }
@@ -170,5 +164,13 @@ public class MDCBot
             if(command.getName().equalsIgnoreCase(name))
                 return true;
         return false;
+    }
+
+    public static User getUserByID(long userId)
+    {
+        for(User user : users)
+            if(user.getIdLong() == userId)
+                return user;
+        return null;
     }
 }

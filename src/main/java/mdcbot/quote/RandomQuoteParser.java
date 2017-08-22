@@ -39,13 +39,12 @@ public class RandomQuoteParser {
     List<Integer> intlist = new ArrayList<>();
     Random random = new Random();
     public String getRandomQuote(){
-        int randint = random.nextInt(this.quotes.size()-1);
-        while(intlist.size() <= 3) {
-            if (intlist.contains(randint)) {
-                randint = random.nextInt(this.quotes.size() - 1);
-            }
-            intlist.add(randint);
-        }
+        int randint;
+        do randint = random.nextInt(this.quotes.size()-1);
+        while(intlist.contains(randint));
+        intlist.add(randint);
+        if(intlist.size() > 3)
+            intlist.remove(0);
         return this.quotes.get(randint);
     }
 }
