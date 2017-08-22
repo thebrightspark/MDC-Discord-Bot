@@ -6,7 +6,9 @@ public enum EConfigs
     OWNER_ID("", false, false, false),
     PREFIX("!", true, false, true),
     LOG_CHANNEL_NAME("logs", true, false, false),
-    DISABLED_COMMANDS("", true, true, false);
+    DISABLED_COMMANDS("", true, true, false),
+    ADMIN_ROLES("admin", true, true, false),
+    MOD_ROLES("moderator", true, true, false);
 
     public final String defaultValue;
     public final boolean canCommandModify, canHaveMultipleValues, needsRestart;

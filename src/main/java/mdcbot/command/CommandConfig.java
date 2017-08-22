@@ -11,6 +11,7 @@ public class CommandConfig extends CommandBase
     public CommandConfig()
     {
         super("config", "Set config values");
+        rolePermission = RolePermission.ADMIN;
     }
 
     @Override
