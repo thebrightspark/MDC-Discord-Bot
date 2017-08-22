@@ -3,10 +3,7 @@ package mdcbot;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
 import com.jagrosh.jdautilities.waiter.EventWaiter;
-import mdcbot.command.CommandConfig;
-import mdcbot.command.CommandGetPoints;
-import mdcbot.command.CommandHello;
-import mdcbot.command.CommandRandQuote;
+import mdcbot.command.*;
 import mdcbot.listeners.Listener;
 import mdcbot.points.UserPoints;
 import net.dv8tion.jda.core.AccountType;
@@ -84,7 +81,7 @@ public class MDCBot
         addCommand(new CommandHello());
         addCommand(new CommandConfig());
         addCommand(new CommandRandQuote());
-        addCommand(new CommandGetPoints());
+        addCommand(new CommandManagePoints());
     }
 
     public static void main(String... args)
