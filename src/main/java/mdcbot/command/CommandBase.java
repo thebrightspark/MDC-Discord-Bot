@@ -6,6 +6,7 @@ import mdcbot.LogLevel;
 import mdcbot.MDCBot;
 import mdcbot.Util;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 
 import javax.annotation.Nullable;
@@ -13,6 +14,21 @@ import java.time.Instant;
 
 public abstract class CommandBase extends Command
 {
+    enum RolePermission
+    {
+        ADMIN,
+        MODERATOR,
+        NONE;
+
+        @Override
+        public String toString()
+        {
+            return super.toString().toLowerCase();
+        }
+    }
+
+    protected RolePermission rolePermission = RolePermission.NONE;
+
     public CommandBase(String name, String help)
     {
         this.name = name;
@@ -36,13 +52,15 @@ public abstract class CommandBase extends Command
     @Override
     protected void execute(CommandEvent event)
     {
-        if(!MDCBot.isCommandDisabled(name))
+        if(MDCBot.isCommandDisabled(name))
+            debug(event, "Command '%s' is disabled", event.getMessage().getContent());
+        else if(!isAllowedToUseCommand(event.getMember()))
+            debug(event, "You need to be a bot %s to use this command", rolePermission);
+        else
         {
             debug(event, "Executing command '%s'", event.getMessage().getContent());
             doCommand(event);
         }
-        else
-            debug(event, "Command '%s' is disabled", event.getMessage().getContent());
     }
 
     protected abstract void doCommand(CommandEvent event);
@@ -96,5 +114,20 @@ public abstract class CommandBase extends Command
     protected void debug(CommandEvent event, String text, Object... args)
     {
         log(event, LogLevel.DEBUG, text, args);
+    }
+
+    private boolean isAllowedToUseCommand(Member member)
+    {
+        if(member == null || rolePermission == null)
+            return false;
+        switch(rolePermission)
+        {
+            case ADMIN:
+                return MDCBot.isMemberBotAdmin(member);
+            case MODERATOR:
+                return MDCBot.isMemberBotModerator(member);
+            default:
+                return true;
+        }
     }
 }

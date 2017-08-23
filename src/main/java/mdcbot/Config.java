@@ -2,6 +2,7 @@ package mdcbot;
 
 import java.io.*;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class Config
 {
@@ -25,7 +26,8 @@ public class Config
         String output;
         if(configKey.canHaveMultipleValues)
         {
-            String existing = get(configKey);
+            //If the config can have multiple values
+            String existing = getInternal(configKey);
             if(existing == null || existing.trim().isEmpty())
                 //If nothing set, then just set to the value
                 output = config.put(configKey.toString(), configValue);
@@ -58,6 +60,17 @@ public class Config
     }
 
     public static String get(EConfigs configKey)
+    {
+        String value = getInternal(configKey);
+        if(value == null)
+        {
+            config.put(configKey.toString(), configKey.defaultValue);
+            value = configKey.defaultValue;
+        }
+        return value;
+    }
+
+    public static String getInternal(EConfigs configKey)
     {
         return config.get(configKey.toString());
     }
@@ -155,7 +168,16 @@ public class Config
         try
         {
             output = new FileOutputStream(MDCBot.CONFIG_FILE);
-            //Set properties
+
+            List<Map.Entry<String, String>> entries = new ArrayList<>(config.entrySet());
+
+            //The following was my attempt at trying to sort the configs by key, but you can't sort the Properties :(
+            //Sort the properties alphabetically by key
+            //entries.sort((o1, o2) -> o1.getKey().compareToIgnoreCase(o2.getKey()));
+            //Set the properties
+            //entries.forEach(entry -> properties.setProperty(entry.getKey(), entry.getValue()));
+
+            //Set the properties
             config.forEach(properties::setProperty);
             //Save properties
             properties.store(output, null);

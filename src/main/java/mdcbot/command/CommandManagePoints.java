@@ -9,6 +9,7 @@ import net.dv8tion.jda.core.entities.User;
 public class CommandManagePoints extends CommandBase{
     public CommandManagePoints(){
         super("points", "Manage a user's points.");
+        rolePermission = RolePermission.MODERATOR;
     }
 
     public void doCommand(CommandEvent event){

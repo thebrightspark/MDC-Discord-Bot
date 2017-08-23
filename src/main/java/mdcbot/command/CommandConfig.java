@@ -11,6 +11,7 @@ public class CommandConfig extends CommandBase
     public CommandConfig()
     {
         super("config", "Set config values");
+        rolePermission = RolePermission.ADMIN;
     }
 
     @Override
@@ -23,7 +24,6 @@ public class CommandConfig extends CommandBase
     protected void doCommand(CommandEvent event)
     {
         String[] mParts = event.getArgs().split("\\s+");
-        info(event, Util.listAsCommaSeperatedString(mParts));
         if(mParts.length < 2)
         {
             fail(event, getUsage());

@@ -10,9 +10,7 @@ import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.OnlineStatus;
-import net.dv8tion.jda.core.entities.Game;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
 import org.apache.log4j.Logger;
 
@@ -49,6 +47,8 @@ public class MDCBot
 
     public static List<Command> commands = new ArrayList<>();
     public static List<User> users;
+    public static List<String> adminRoles = new ArrayList<>();
+    public static List<String> moderatorRoles = new ArrayList<>();
 
     private static List<String> disabledCommands = new ArrayList<>();
 
@@ -103,6 +103,10 @@ public class MDCBot
         //Populate disabledCommands list from config
         reloadDisabledCommands();
 
+        //Get admin and moderator roles
+        adminRoles.addAll(Arrays.asList(Config.get(EConfigs.ADMIN_ROLES).split(",")));
+        moderatorRoles.addAll(Arrays.asList(Config.get(EConfigs.MOD_ROLES).split(",")));
+
         initCommands();
 
         CommandClientBuilder client = new CommandClientBuilder();
@@ -136,6 +140,8 @@ public class MDCBot
         users = jda.getUsers();
         for(User user : users)
             UserPoints.addOrSubPoints(user, 5, false);
+
+        Config.save();
 
         LOG.info("Initialisation complete");
     }
@@ -171,5 +177,23 @@ public class MDCBot
             if(user.getIdLong() == userId)
                 return user;
         return null;
+    }
+
+    public static boolean isMemberBotAdmin(Member member)
+    {
+        for(Role role : member.getRoles())
+            for(String modRole : adminRoles)
+                if(modRole.equalsIgnoreCase(role.getName()))
+                    return true;
+        return false;
+    }
+
+    public static boolean isMemberBotModerator(Member member)
+    {
+        for(Role role : member.getRoles())
+            for(String modRole : moderatorRoles)
+                if(modRole.equalsIgnoreCase(role.getName()))
+                return true;
+        return isMemberBotAdmin(member);
     }
 }
