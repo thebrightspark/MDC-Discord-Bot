@@ -105,7 +105,6 @@ public class MDCBot
 
         initCommands();
 
-
         CommandClientBuilder client = new CommandClientBuilder();
         client.useDefaultGame();
         client.setOwnerId(Config.get(EConfigs.OWNER_ID));

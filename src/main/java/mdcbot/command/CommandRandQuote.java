@@ -1,7 +1,10 @@
 package mdcbot.command;
 
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
+import mdcbot.MDCBot;
 import mdcbot.quote.RandomQuoteParser;
+import net.dv8tion.jda.core.MessageBuilder;
+import net.dv8tion.jda.core.entities.Message;
 
 public class CommandRandQuote extends CommandBase{
 
@@ -14,6 +17,8 @@ public class CommandRandQuote extends CommandBase{
 
     @Override
     protected void doCommand(CommandEvent event) {
-        event.reply(parser.getRandomQuote());
+        MessageBuilder message = new MessageBuilder();
+        event.reply(message.appendCodeBlock(parser.getRandomQuote(), "").getStringBuilder().toString() + "\n-" + parser.getAuthor());
+        message.build();
     }
 }
