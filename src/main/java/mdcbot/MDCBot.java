@@ -80,6 +80,7 @@ public class MDCBot
         addCommand(new CommandConfig());
         addCommand(new CommandRandQuote());
         addCommand(new CommandManagePoints());
+        addCommand(new CommandGetUsersList());
     }
 
     public static void main(String... args)
@@ -138,9 +139,10 @@ public class MDCBot
         if(! logChannels.isEmpty()) logChannel = logChannels.get(0);
 
         users = jda.getUsers();
-        for(User user : users)
-            UserPoints.addOrSubPoints(user, 5, false);
 
+        for(User user : users) {
+            UserPoints.addOrSubPoints(user, 5, false);
+        }
         Config.save();
 
         LOG.info("Initialisation complete");
