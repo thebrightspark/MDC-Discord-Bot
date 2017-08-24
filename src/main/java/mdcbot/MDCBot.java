@@ -4,7 +4,7 @@ import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
 import com.jagrosh.jdautilities.waiter.EventWaiter;
 import mdcbot.command.*;
-import mdcbot.listeners.Listener;
+import mdcbot.listeners.TrafficManager;
 import mdcbot.points.UserPoints;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
@@ -81,6 +81,7 @@ public class MDCBot
         addCommand(new CommandRandQuote());
         addCommand(new CommandManagePoints());
         addCommand(new CommandGetUsersList());
+        addCommand(new CommandTraffic());
     }
 
     public static void main(String... args)
@@ -125,7 +126,7 @@ public class MDCBot
                     .addEventListener(
                             client.build(),
                             waiter,
-                            new Listener()) //,
+                            new TrafficManager()) //,
                             //new MessageReceivedListener())
                     .buildBlocking();
         }
