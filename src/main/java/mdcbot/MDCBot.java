@@ -4,7 +4,9 @@ import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
 import com.jagrosh.jdautilities.waiter.EventWaiter;
 import mdcbot.command.*;
+import mdcbot.io.UserPointsIO;
 import mdcbot.listeners.TrafficManager;
+import mdcbot.listeners.UserJoinAndLeaveEvent;
 import mdcbot.points.UserPoints;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
@@ -36,8 +38,11 @@ public class MDCBot
     public static final String AUTH_URL = "https://discordapp.com/oauth2/authorize?&client_id=" + CLIENT_ID + "&scope=bot";
 
     public static final File RESOURCES_DIR = new File("src/main/resources");
+    public static final File SAVES_DIR = new File("saves");
     public static final File LOG4J_PROPERTIES_FILE = new File(RESOURCES_DIR, "log4j.properties");
     public static final File CONFIG_FILE = Paths.get("config.properties").toFile();
+    public static final File USER_POINTS_FILE = new File(SAVES_DIR, "user_points.txt");
+    public static final File MESSAGES_FILE = new File(SAVES_DIR, "messages.txt");
 
     public static JDA jda;
     public static Logger LOG = Logger.getLogger(NAME);
@@ -46,11 +51,12 @@ public class MDCBot
     public static EventWaiter waiter = new EventWaiter();
 
     public static List<Command> commands = new ArrayList<>();
-    public static List<User> users;
     public static List<String> adminRoles = new ArrayList<>();
     public static List<String> moderatorRoles = new ArrayList<>();
 
     private static List<String> disabledCommands = new ArrayList<>();
+
+    public static List<User> users;
 
     static
     {
@@ -126,24 +132,30 @@ public class MDCBot
                     .addEventListener(
                             client.build(),
                             waiter,
-                            new TrafficManager()) //,
-                            //new MessageReceivedListener())
-                    .buildBlocking();
+                            new TrafficManager(),
+                            new UserJoinAndLeaveEvent()
+                    ).buildBlocking();
         }
         catch(LoginException | InterruptedException | RateLimitedException e)
         {
             e.printStackTrace();
         }
 
+        users = UserJoinAndLeaveEvent.users;
+
+        UserPointsIO.init();
+
+
+        /*users = jda.getUsers();
+
+        for(User user : users){
+            UserPoints.addOrSubPoints(user, 5, false);
+        }*/
+
         //Find logs channel
         List<TextChannel> logChannels = jda.getTextChannelsByName(Config.get(EConfigs.LOG_CHANNEL_NAME), false);
         if(! logChannels.isEmpty()) logChannel = logChannels.get(0);
 
-        users = jda.getUsers();
-
-        for(User user : users) {
-            UserPoints.addOrSubPoints(user, 5, false);
-        }
         Config.save();
 
         LOG.info("Initialisation complete");

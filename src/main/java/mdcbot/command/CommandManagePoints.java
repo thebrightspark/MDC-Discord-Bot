@@ -14,26 +14,28 @@ public class CommandManagePoints extends CommandBase{
 
     public void doCommand(CommandEvent event){
         String[] args = Util.splitCommandArgs(event.getArgs());
-        for(User user : MDCBot.users) {
-            if(args.length == 3){
-                if(user.getId().equals(args[1])) {
-                    int points = Integer.parseInt(args[2]);
-                    UserPoints.addOrSubPoints(user, points, !args[0].equalsIgnoreCase("add") && args[0].equalsIgnoreCase("remove"));
-                    event.reply(MDCBot.jda.getUserById(Long.parseLong(args[1])) + " had " + points + " points " +
-                            (args[0].equalsIgnoreCase("add") ? "added" : (args[0].equalsIgnoreCase("remove") ? "removed" : null))
-                    );
-                    user.openPrivateChannel().queue((channel)->{
-                        channel.sendMessage("Aye nigga, ya'll now have " + UserPoints.getUsersPoints(user) + " points. If ya'll tink dis is a prob, talk to yo admin, aight?").queue();
-                    });
-                }
-            }else if(args.length == 2){
-                if(args[0].equalsIgnoreCase("get")) {
+        if(args[1].equals(event.getAuthor().getId())){
+            event.reply("You cannot edit your own points!");
+        }else {
+            for (User user : MDCBot.users) {
+                if (args.length == 3) {
                     if (user.getId().equals(args[1])) {
-                        event.reply(user.getName() + " has " + UserPoints.getUsersPoints(user) + " points.");
+                        int points = Integer.parseInt(args[2]);
+                        UserPoints.addOrSubPoints(user, points, !args[0].equalsIgnoreCase("add") && args[0].equalsIgnoreCase("remove"));
+                        event.reply(MDCBot.jda.getUserById(Long.parseLong(args[1])) + " had " + points + " points " +
+                                (args[0].equalsIgnoreCase("add") ? "added" : (args[0].equalsIgnoreCase("remove") ? "removed" : null))
+                        );
+                        user.openPrivateChannel().queue((channel) -> channel.sendMessage("You now have " + UserPoints.getUsersPoints(user) + " points. If you think this is a problem, contact an admin.").queue());
                     }
+                } else if (args.length == 2) {
+                    if (args[0].equalsIgnoreCase("get")) {
+                        if (user.getId().equals(args[1])) {
+                            event.reply(user.getName() + " has " + UserPoints.getUsersPoints(user) + " points.");
+                        }
+                    }
+                } else {
+                    event.replyError("That doesn't tickle me jones. Please use points <get:add:remove> <user_id> [amount]");
                 }
-            }else{
-                event.replyError("That doesn't tickle me jones. Please use points <get:add:remove> <user_id> [amount]");
             }
         }
     }
