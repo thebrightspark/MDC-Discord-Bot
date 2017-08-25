@@ -30,10 +30,6 @@ public class FileManager {
             } else {
                 Util.error("Cannot create directory: " + dir);
             }
-            fr = new FileReader(file);
-            br = new BufferedReader(fr);
-            fw = new FileWriter(file);
-            bw = new BufferedWriter(fw);
         }catch(IOException e){
             Util.error(e.getMessage());
         }
@@ -42,6 +38,8 @@ public class FileManager {
     public boolean writeToFile(String contents){
         if(!contents.isEmpty()) {
             try {
+                fw = new FileWriter(file);
+                bw = new BufferedWriter(fw);
                 this.bw.write(contents);
             }catch(IOException e){
                 MDCBot.LOG.trace(e.getMessage(), e.getCause());
@@ -64,6 +62,8 @@ public class FileManager {
     public List<String> readFromFile(){
         List<String> sa = new ArrayList<>();
         try {
+            fr = new FileReader(file);
+            br = new BufferedReader(fr);
             while (this.br.readLine() != null) {
                 String s = this.br.readLine();
                 sa.add(s);
