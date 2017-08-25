@@ -143,9 +143,6 @@ public class MDCBot
 
         users = UserJoinAndLeaveEvent.users;
 
-        UserPointsIO.init();
-
-
         /*users = jda.getUsers();
 
         for(User user : users){

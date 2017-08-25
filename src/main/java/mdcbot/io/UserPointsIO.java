@@ -1,10 +1,12 @@
 package mdcbot.io;
 
 import mdcbot.MDCBot;
+import mdcbot.Util;
 import mdcbot.points.UserPoints;
 import net.dv8tion.jda.core.entities.User;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,17 +22,21 @@ public class UserPointsIO {
         fm.writeToFile(s);
     }
 
-    /*public static List<String> load(){
+    public static Map<User, Integer> load(){
         List<String> list = fm.readFromFile();
+        Map<User, Integer> userPoints = new HashMap<>();
         for(String s : list){
-            if(s.contains("=")){
-                continue;
-            }
             if(s.contains(":")){
                 String name = s.substring(0, s.indexOf(":"));
-                String points = s.substring(s.indexOf(":")+1, s.length());
-
+                String spoints = s.substring(s.indexOf(":")+1, s.length());
+                String sid = name.substring(name.indexOf("(")+1, name.indexOf(")")-1);
+                Long id = Long.parseLong(sid);
+                Integer points = Integer.parseInt(spoints.trim());
+                User user = MDCBot.jda.getUserById(id);
+                Util.debug("Loading points for: " + user.getName() + " - " + points);
+                userPoints.put(user, points);
             }
         }
-    }*/
+        return userPoints;
+    }
 }

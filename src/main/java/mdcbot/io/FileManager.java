@@ -67,13 +67,6 @@ public class FileManager {
             while (this.br.readLine() != null) {
                 String s = this.br.readLine();
                 sa.add(s);
-                for (int i = 0; i < s.length(); i++) {
-                    String s1 = "" + s.charAt(i) + s.charAt(i + 1);
-                    if (s1.equals("\n")) {
-                        String s2 = s.substring(0, s.indexOf(s1));
-                        sa.add(s2);
-                    }
-                }
             }
         }catch(IOException e){
             Util.error(e.getMessage(), e.getCause());

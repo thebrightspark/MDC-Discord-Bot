@@ -10,9 +10,10 @@ import java.util.Map;
 
 public class UserPoints {
 
-    private static Map<User, Integer> userPoints = new HashMap<>();
+    private static Map<User, Integer> userPoints;
 
     public static void init(){
+        userPoints = UserPointsIO.load();
     }
 
     public static void addOrSubPoints(User user, int points, boolean deduct){
