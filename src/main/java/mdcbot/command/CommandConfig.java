@@ -23,7 +23,7 @@ public class CommandConfig extends CommandBase
     @Override
     protected void doCommand(CommandEvent event)
     {
-        String[] mParts = event.getArgs().split("\\s+");
+        String[] mParts = Util.splitCommandArgs(event.getArgs());
         if(mParts.length < 2)
         {
             fail(event, getUsage());

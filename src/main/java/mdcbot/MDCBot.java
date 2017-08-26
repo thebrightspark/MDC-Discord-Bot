@@ -42,7 +42,8 @@ public class MDCBot
     public static final File LOG4J_PROPERTIES_FILE = new File(RESOURCES_DIR, "log4j.properties");
     public static final File CONFIG_FILE = Paths.get("config.properties").toFile();
     public static final File USER_POINTS_FILE = new File(SAVES_DIR, "user_points.txt");
-    public static final File MESSAGES_FILE = new File(SAVES_DIR, "messages.txt");
+    public static final File TRAFFIC_USERS_FILE = new File(SAVES_DIR, "traffic_users.txt");
+    public static final File TRAFFIC_MESSAGES_FILE = new File(SAVES_DIR, "traffic_messages.txt");
 
     public static JDA jda;
     public static Logger LOG = Logger.getLogger(NAME);

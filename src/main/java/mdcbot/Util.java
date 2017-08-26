@@ -41,6 +41,6 @@ public class Util
     }
 
     public static String[] splitCommandArgs(String args){
-        return args.split("\\s");
+        return args.split("\\s+");
     }
 }

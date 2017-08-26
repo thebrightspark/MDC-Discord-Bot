@@ -4,23 +4,18 @@ import mdcbot.MDCBot;
 import mdcbot.Util;
 
 import java.io.*;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FileManager {
     private File file;
-    private File dir;
-    private FileReader fr;
     private BufferedReader br;
-    private FileWriter fw;
     private BufferedWriter bw;
 
     public FileManager(File dir, File file) {
         try {
             this.file = file;
-            this.dir = dir;
-            if (dir.mkdir() || dir.isDirectory()) {
+            if (dir.mkdir()) {
                 if (!file.exists()) {
                     if (!file.createNewFile())
                         Util.error("Could not create new file: " + file);
@@ -38,15 +33,13 @@ public class FileManager {
     public boolean writeToFile(String contents){
         if(!contents.isEmpty()) {
             try {
-                fw = new FileWriter(file);
-                bw = new BufferedWriter(fw);
+                bw = new BufferedWriter(new FileWriter(file));
                 this.bw.write(contents);
             }catch(IOException e){
                 MDCBot.LOG.trace(e.getMessage(), e.getCause());
             }finally{
                 try{
                     this.bw.close();
-                    this.fw.close();
                 }catch(IOException e){
                     Util.error(e.getMessage(), e.getCause());
                 }
@@ -62,8 +55,7 @@ public class FileManager {
     public List<String> readFromFile(){
         List<String> sa = new ArrayList<>();
         try {
-            fr = new FileReader(file);
-            br = new BufferedReader(fr);
+            br = new BufferedReader(new FileReader(file));
             while (this.br.readLine() != null) {
                 String s = this.br.readLine();
                 sa.add(s);
@@ -72,7 +64,6 @@ public class FileManager {
             Util.error(e.getMessage(), e.getCause());
         }finally {
             try {
-                this.fr.close();
                 this.br.close();
             }catch(IOException e){
                 Util.error(e.getMessage(), e.getCause());

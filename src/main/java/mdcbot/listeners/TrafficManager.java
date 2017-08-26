@@ -1,6 +1,9 @@
 package mdcbot.listeners;
 
+import mdcbot.DatedUser;
+import mdcbot.MDCBot;
 import mdcbot.Util;
+import mdcbot.io.FileManager;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.PermissionOverride;
@@ -28,6 +31,8 @@ public class TrafficManager extends ListenerAdapter
     private static List<Date> messages = new ArrayList<>();
     private static float maxRatio = -1f;
     private static float lastRatio = -1f;
+    private static FileManager fm_users = new FileManager(MDCBot.SAVES_DIR,  MDCBot.TRAFFIC_USERS_FILE);
+    private static FileManager fm_messages = new FileManager(MDCBot.SAVES_DIR,  MDCBot.TRAFFIC_MESSAGES_FILE);
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event)
@@ -95,6 +100,44 @@ public class TrafficManager extends ListenerAdapter
         getRatio();
     }
 
+    private static void saveToFiles()
+    {
+        //Save users
+        StringBuilder sb = new StringBuilder();
+        for(DatedUser datedUser : users)
+            sb.append(datedUser).append("\n");
+        fm_users.writeToFile(sb.toString());
+
+        //Save messages
+        sb = new StringBuilder();
+        for(Date date : messages)
+            sb.append(date.getTime()).append("\n");
+        fm_messages.writeToFile(sb.toString());
+    }
+
+    private static void readFromFiles()
+    {
+        //Read users
+        users.clear();
+        for(String line : fm_users.readFromFile())
+            users.add(new DatedUser(line));
+
+        //Read messages
+        messages.clear();
+        for(String line : fm_messages.readFromFile())
+        {
+            try
+            {
+                messages.add(new Date(Long.parseLong(line)));
+            }
+            catch(NumberFormatException e)
+            {
+                Util.error("Couldn't parse to Date: " + line);
+                e.printStackTrace();
+            }
+        }
+    }
+
     private static float getRatio()
     {
         float ratio = lastRatio = (float) messages.size() / (float) users.size();
@@ -129,27 +172,5 @@ public class TrafficManager extends ListenerAdapter
     public static float getMaxRatio()
     {
         return maxRatio;
-    }
-
-    private class DatedUser
-    {
-        private User user;
-        private Date date;
-
-        public DatedUser(User user, Date date)
-        {
-            this.user = user;
-            this.date = date;
-        }
-
-        public User getUser()
-        {
-            return user;
-        }
-
-        public Date getDate()
-        {
-            return date;
-        }
     }
 }
