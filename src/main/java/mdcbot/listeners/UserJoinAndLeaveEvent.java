@@ -15,7 +15,7 @@ public class UserJoinAndLeaveEvent extends ListenerAdapter {
     @Override
     public void onReady(ReadyEvent event) {
         users = event.getJDA().getUsers();
-        UserPoints.init();
+        UserPoints.init(event);
     }
 
     @Override

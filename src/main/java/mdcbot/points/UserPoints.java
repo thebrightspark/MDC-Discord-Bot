@@ -4,6 +4,7 @@ import mdcbot.MDCBot;
 import mdcbot.io.UserPointsIO;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.events.ReadyEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,8 +13,8 @@ public class UserPoints {
 
     private static Map<User, Integer> userPoints;
 
-    public static void init(){
-        userPoints = UserPointsIO.load();
+    public static void init(ReadyEvent event){
+        userPoints = UserPointsIO.load(event);
     }
 
     public static void addOrSubPoints(User user, int points, boolean deduct){

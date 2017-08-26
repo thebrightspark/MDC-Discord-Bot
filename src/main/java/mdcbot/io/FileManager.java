@@ -15,12 +15,13 @@ public class FileManager {
     public FileManager(File dir, File file) {
         try {
             this.file = file;
-            if (dir.mkdir()) {
+            if (dir.mkdir() || dir.exists()) {
                 if (!file.exists()) {
-                    if (!file.createNewFile())
+                    if (!file.createNewFile()) {
                         Util.error("Could not create new file: " + file);
-                    else
+                    } else {
                         Util.debug("Created new file: " + file);
+                    }
                 }
             } else {
                 Util.error("Cannot create directory: " + dir);
@@ -56,8 +57,8 @@ public class FileManager {
         List<String> sa = new ArrayList<>();
         try {
             br = new BufferedReader(new FileReader(file));
-            while (this.br.readLine() != null) {
-                String s = this.br.readLine();
+            String s;
+            while ((s = this.br.readLine()) != null) {
                 sa.add(s);
             }
         }catch(IOException e){
