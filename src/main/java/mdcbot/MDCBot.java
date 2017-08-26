@@ -156,6 +156,8 @@ public class MDCBot
 
         Config.save();
 
+        TrafficManager.init();
+
         LOG.info("Initialisation complete");
     }
 

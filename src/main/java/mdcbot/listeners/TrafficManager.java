@@ -15,6 +15,9 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This class records the amount of messages sent in all public channels and the amount of unique users who sent the
@@ -22,8 +25,6 @@ import java.util.*;
  *
  * You can get a "traffic rating" using the traffic command
  * {@link mdcbot.command.CommandTraffic}
- *
- * TODO: Periodically dump all of the data into a file in a new thread
  */
 public class TrafficManager extends ListenerAdapter
 {
@@ -33,6 +34,19 @@ public class TrafficManager extends ListenerAdapter
     private static float lastRatio = -1f;
     private static FileManager fm_users = new FileManager(MDCBot.SAVES_DIR,  MDCBot.TRAFFIC_USERS_FILE);
     private static FileManager fm_messages = new FileManager(MDCBot.SAVES_DIR,  MDCBot.TRAFFIC_MESSAGES_FILE);
+    private static boolean dataChanged = false;
+
+    public static void init()
+    {
+        readFromFiles();
+
+        //Setup a thread to run every 30s to save the traffic data
+        ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1);
+        executorService.scheduleAtFixedRate(() ->
+        {
+            if(dataChanged) saveToFiles();
+        }, 10, 30, TimeUnit.SECONDS);
+    }
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event)
@@ -54,7 +68,7 @@ public class TrafficManager extends ListenerAdapter
 
         //Record this message
         Date messageTimestamp = new Date(event.getMessage().getCreationTime().toEpochSecond() * 1000);
-        Util.info("Adding message with date: %s", messageTimestamp);
+        Util.info("Adding message: %s -> '%s'", messageTimestamp, event.getMessage().getContent());
         if(!hasUser(event.getAuthor()))
             users.add(new DatedUser(event.getAuthor(), messageTimestamp));
         messages.add(messageTimestamp);
@@ -63,6 +77,8 @@ public class TrafficManager extends ListenerAdapter
         messages.sort(Comparator.naturalOrder());
 
         checkData();
+
+        dataChanged = true;
     }
 
     private boolean hasUser(User user)
@@ -100,8 +116,10 @@ public class TrafficManager extends ListenerAdapter
         getRatio();
     }
 
-    private static void saveToFiles()
+    public static void saveToFiles()
     {
+        dataChanged = false;
+
         //Save users
         StringBuilder sb = new StringBuilder();
         for(DatedUser datedUser : users)
@@ -113,14 +131,17 @@ public class TrafficManager extends ListenerAdapter
         for(Date date : messages)
             sb.append(date.getTime()).append("\n");
         fm_messages.writeToFile(sb.toString());
+
+        Util.debug("Saved traffic data");
     }
 
-    private static void readFromFiles()
+    public static void readFromFiles()
     {
         //Read users
         users.clear();
         for(String line : fm_users.readFromFile())
             users.add(new DatedUser(line));
+        Util.debug("Read %s users from file", users.size());
 
         //Read messages
         messages.clear();
@@ -136,6 +157,9 @@ public class TrafficManager extends ListenerAdapter
                 e.printStackTrace();
             }
         }
+        Util.debug("Read %s messages from file", messages.size());
+
+        checkData();
     }
 
     private static float getRatio()
