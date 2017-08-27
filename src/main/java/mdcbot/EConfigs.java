@@ -7,8 +7,8 @@ public enum EConfigs
     PREFIX("!", true, false, true),
     LOG_CHANNEL_NAME("logs", true, false, false),
     DISABLED_COMMANDS("", true, true, false),
-    ADMIN_ROLES("admin", true, true, false),
-    MOD_ROLES("moderator", true, true, false),
+    ADMIN_ROLES("Admin", true, true, false),
+    MOD_ROLES("Moderator", true, true, false),
     NEW_MEMBER_ROLE("New Recruit", true, false, false),
     MUTED_ROLE("Muted", true, false, false);
 
