@@ -7,7 +7,6 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 import java.util.Random;
-import java.util.function.Consumer;
 
 /**
  * Just a test listener which prints every message to the console
@@ -53,7 +52,6 @@ public class MessageReceivedListener extends ListenerAdapter
         if(isBot) userName = "BOT:" + userName;
 
         MDCBot.LOG.info("(" + guildName + ")[" + channelName + "]<" + userName + ">: " + messageText);
-
 
 
         if(messageText.equals("hello"))

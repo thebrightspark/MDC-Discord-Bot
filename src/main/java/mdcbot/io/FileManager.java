@@ -31,7 +31,8 @@ public class FileManager {
         }
     }
 
-    public boolean writeToFile(String contents){
+    public <T> boolean writeToFile(T t){
+        String contents = String.valueOf(t);
         if(!contents.isEmpty()) {
             try {
                 bw = new BufferedWriter(new FileWriter(file));

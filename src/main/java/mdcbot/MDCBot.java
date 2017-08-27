@@ -4,6 +4,7 @@ import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
 import com.jagrosh.jdautilities.waiter.EventWaiter;
 import mdcbot.command.*;
+import mdcbot.listeners.FileChangeListener;
 import mdcbot.listeners.MutedListener;
 import mdcbot.listeners.TrafficManager;
 import mdcbot.listeners.UserJoinAndLeaveEvent;
@@ -21,6 +22,8 @@ import java.net.MalformedURLException;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class MDCBot
 {
@@ -38,12 +41,15 @@ public class MDCBot
 
     public static final File RESOURCES_DIR = new File("src/main/resources");
     public static final File SAVES_DIR = new File("saves");
+    public static final File RULES_DIR = new File("rules");
     public static final File LOG4J_PROPERTIES_FILE = new File(RESOURCES_DIR, "log4j.properties");
     public static final File CONFIG_FILE = Paths.get("config.properties").toFile();
     public static final File USER_POINTS_FILE = new File(SAVES_DIR, "user_points.txt");
     public static final File TRAFFIC_USERS_FILE = new File(SAVES_DIR, "traffic_users.txt");
     public static final File TRAFFIC_MESSAGES_FILE = new File(SAVES_DIR, "traffic_messages.txt");
     public static final File TRAFFIC_MAXRATIO_FILE = new File(SAVES_DIR, "traffic_maxratio.txt");
+    public static final File RULES_FILE = new File(RULES_DIR,"rules.txt");
+    public static final File RULES_CACHE_FILE = new File(RULES_DIR,"rules_cache.txt");
 
     public static JDA jda;
     public static Logger LOG = Logger.getLogger(NAME);
@@ -173,6 +179,10 @@ public class MDCBot
         TrafficManager.init();
 
         LOG.info("Initialisation complete");
+
+        FileChangeListener fcl = new FileChangeListener(RULES_FILE);
+        fcl.lastModified = RULES_FILE.lastModified();
+        fcl.watchFileForChanges();
     }
 
     public static void reloadDisabledCommands()
