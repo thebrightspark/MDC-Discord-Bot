@@ -51,6 +51,7 @@ public class MDCBot
     public static String PREFIX;
     public static TextChannel logChannel;
     public static Role newMemberRole;
+    public static Role mutedRole;
     public static EventWaiter waiter = new EventWaiter();
 
     private static List<Command> commands = new ArrayList<>();
@@ -157,8 +158,12 @@ public class MDCBot
         if(!logChannels.isEmpty()) logChannel = logChannels.get(0);
 
         //Find new member role
-        List<Role> roles = jda.getRolesByName(Config.get(EConfigs.NEW_MEMBER_ROLE), false);
-        if(!roles.isEmpty()) newMemberRole = roles.get(0);
+        List<Role> newMemberRoles = jda.getRolesByName(Config.get(EConfigs.NEW_MEMBER_ROLE), false);
+        if(!newMemberRoles.isEmpty()) newMemberRole = newMemberRoles.get(0);
+
+        //Find muted role
+        List<Role> mutedRoles = jda.getRolesByName(Config.get(EConfigs.MUTED_ROLE), false);
+        if(!mutedRoles.isEmpty()) mutedRole = mutedRoles.get(0);
 
         Config.save();
 
@@ -205,7 +210,7 @@ public class MDCBot
         if(member == null) return false;
         for(Role role : member.getRoles())
             for(String modRole : adminRoles)
-                if(modRole.equalsIgnoreCase(role.getName()))
+                if(modRole.equals(role.getName()))
                     return true;
         return false;
     }
@@ -215,8 +220,17 @@ public class MDCBot
         if(member == null) return false;
         for(Role role : member.getRoles())
             for(String modRole : moderatorRoles)
-                if(modRole.equalsIgnoreCase(role.getName()))
-                return true;
+                if(modRole.equals(role.getName()))
+                    return true;
         return isMemberBotAdmin(member);
+    }
+
+    public static boolean isMemberMuted(Member member)
+    {
+        if(member == null) return false;
+        for(Role role : member.getRoles())
+            if(role.getName().equals(mutedRole.getName()))
+                return true;
+        return false;
     }
 }

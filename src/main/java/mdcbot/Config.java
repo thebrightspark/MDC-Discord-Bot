@@ -113,6 +113,14 @@ public class Config
 
             save();
         }
+        else if(config.size() != EConfigs.values().length)
+        {
+            for(EConfigs c : EConfigs.values())
+                if(!config.containsKey(c.toString()))
+                    setInternal(c, c.defaultValue);
+
+            save();
+        }
     }
 
     /**
