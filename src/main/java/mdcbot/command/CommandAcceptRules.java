@@ -2,6 +2,7 @@ package mdcbot.command;
 
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 import mdcbot.MDCBot;
+import mdcbot.Util;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
@@ -29,10 +30,11 @@ public class CommandAcceptRules extends CommandBase
         for(Guild guild : mutualGuilds)
         {
             Member member = guild.getMember(user);
-            if(member != null && !member.getRoles().isEmpty())
+            if(member != null && member.getRoles().isEmpty())
             {
                 GuildController gc = guild.getController();
                 gc.addSingleRoleToMember(member, MDCBot.newMemberRole).queue();
+                Util.info("New member %s given the role %s in guild %s", member.getEffectiveName(), MDCBot.newMemberRole.getName(), guild.getName());
             }
         }
     }

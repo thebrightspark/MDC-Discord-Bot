@@ -4,10 +4,9 @@ import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
 import com.jagrosh.jdautilities.waiter.EventWaiter;
 import mdcbot.command.*;
-import mdcbot.io.UserPointsIO;
+import mdcbot.listeners.MutedListener;
 import mdcbot.listeners.TrafficManager;
 import mdcbot.listeners.UserJoinAndLeaveEvent;
-import mdcbot.points.UserPoints;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -92,6 +91,7 @@ public class MDCBot
         addCommand(new CommandGetUsersList());
         addCommand(new CommandTraffic());
         addCommand(new CommandAcceptRules());
+        addCommand(new CommandGetRolesList());
     }
 
     public static void main(String... args)
@@ -137,7 +137,8 @@ public class MDCBot
                             client.build(),
                             waiter,
                             new TrafficManager(),
-                            new UserJoinAndLeaveEvent()
+                            new UserJoinAndLeaveEvent(),
+                            new MutedListener()
                     ).buildBlocking();
         }
         catch(LoginException | InterruptedException | RateLimitedException e)

@@ -13,7 +13,7 @@ public class CommandGetUsersList extends CommandBase {
     @Override
     protected void doCommand(CommandEvent commandEvent) {
         String list = "";
-        for(User user : MDCBot.users){
+        for(User user : commandEvent.getJDA().getUsers()){
             list = list.concat((!list.equals("") ? ", " : "") + user.getName());
         }
 
