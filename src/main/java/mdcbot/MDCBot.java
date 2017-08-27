@@ -2,6 +2,7 @@ package mdcbot;
 
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
+import com.jagrosh.jdautilities.commandclient.examples.ShutdownCommand;
 import com.jagrosh.jdautilities.waiter.EventWaiter;
 import mdcbot.command.*;
 import mdcbot.listeners.FileChangeListener;
@@ -100,6 +101,7 @@ public class MDCBot
         addCommand(new CommandGetRolesList());
         addCommand(new CommandMute());
         addCommand(new CommandAnnounce());
+        addCommand(new CommandShutdown());
     }
 
     public static void main(String... args)
