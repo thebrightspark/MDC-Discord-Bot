@@ -19,10 +19,11 @@ public class CommandTraffic extends CommandBase
         EmbedBuilder builder = new EmbedBuilder();
         builder.setColor(event.getSelfMember().getColor());
         builder.setTitle("Server Traffic");
-        builder.addField(new MessageEmbed.Field("Current", TrafficManager.getTraffic() + "/10", true));
+        builder.addField(new MessageEmbed.Field("Traffic", TrafficManager.getTraffic() + "/10", true));
 
         if(event.getArgs().equalsIgnoreCase("details"))
         {
+            builder.addField(new MessageEmbed.Field("Current ratio", String.valueOf(TrafficManager.getLastRatio()), true));
             builder.addField(new MessageEmbed.Field("Max ratio", String.valueOf(TrafficManager.getMaxRatio()), true));
             builder.addField(new MessageEmbed.Field("#Messages", String.valueOf(TrafficManager.getNumMessages()), true));
             builder.addField(new MessageEmbed.Field("#Users", String.valueOf(TrafficManager.getNumUsers()), true));
