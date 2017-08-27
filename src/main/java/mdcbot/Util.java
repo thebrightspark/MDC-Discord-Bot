@@ -50,7 +50,7 @@ public class Util
                 author = MDCBot.jda.getSelfUser();
             EmbedBuilder message = new EmbedBuilder();
             message.setColor(level.colour);
-            message.setAuthor(author.getName(), null, author.getEffectiveAvatarUrl());
+            message.setAuthor(getFullUser(author), null, author.getEffectiveAvatarUrl());
             message.setTitle(level.toString());
             message.setDescription(String.format(text, args));
             message.setTimestamp(Instant.now());
@@ -100,5 +100,10 @@ public class Util
 
     public static String[] splitCommandArgs(String args){
         return args.split("\\s+");
+    }
+
+    public static String getFullUser(User user)
+    {
+        return user.getName() + "#" + user.getDiscriminator();
     }
 }

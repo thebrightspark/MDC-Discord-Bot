@@ -93,6 +93,7 @@ public class MDCBot
         addCommand(new CommandAcceptRules());
         addCommand(new CommandGetRolesList());
         addCommand(new CommandMute());
+        addCommand(new CommandAnnounce());
     }
 
     public static void main(String... args)
