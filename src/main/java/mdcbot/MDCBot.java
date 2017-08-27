@@ -92,6 +92,7 @@ public class MDCBot
         addCommand(new CommandTraffic());
         addCommand(new CommandAcceptRules());
         addCommand(new CommandGetRolesList());
+        addCommand(new CommandMute());
     }
 
     public static void main(String... args)
@@ -211,7 +212,7 @@ public class MDCBot
         if(member == null) return false;
         for(Role role : member.getRoles())
             for(String modRole : adminRoles)
-                if(modRole.equals(role.getName()))
+                if(modRole.equalsIgnoreCase(role.getName()))
                     return true;
         return false;
     }
@@ -221,7 +222,7 @@ public class MDCBot
         if(member == null) return false;
         for(Role role : member.getRoles())
             for(String modRole : moderatorRoles)
-                if(modRole.equals(role.getName()))
+                if(modRole.equalsIgnoreCase(role.getName()))
                     return true;
         return isMemberBotAdmin(member);
     }

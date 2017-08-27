@@ -28,6 +28,7 @@ public abstract class CommandBase extends Command
     }
 
     protected RolePermission rolePermission = RolePermission.NONE;
+    protected boolean removeSentMessage = false;
 
     public CommandBase(String name, String help)
     {
@@ -59,6 +60,8 @@ public abstract class CommandBase extends Command
         else
         {
             debug(event, "Executing command '%s'", event.getMessage().getContent());
+            if(removeSentMessage)
+                event.getMessage().delete().queue();
             doCommand(event);
         }
     }
@@ -81,19 +84,8 @@ public abstract class CommandBase extends Command
      */
     private void log(CommandEvent event, LogLevel level, String text, Object... args)
     {
-        String logText = String.format(text, args);
         Util.log(level, text, args);
-        if(MDCBot.logChannel != null)
-        {
-            EmbedBuilder message = new EmbedBuilder();
-            message.setColor(level.colour);
-            User author = event.getAuthor();
-            message.setAuthor(author.getName(), null, author.getEffectiveAvatarUrl());
-            message.setTitle(level.toString());
-            message.setDescription(logText);
-            message.setTimestamp(Instant.now());
-            MDCBot.logChannel.sendMessage(message.build()).queue();
-        }
+        Util.logChannel(level, event.getAuthor(), text, args);
     }
 
     protected void info(CommandEvent event, String text, Object... args)
