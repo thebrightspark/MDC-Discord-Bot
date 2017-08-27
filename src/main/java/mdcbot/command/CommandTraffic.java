@@ -2,6 +2,8 @@ package mdcbot.command;
 
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 import mdcbot.listeners.TrafficManager;
+import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.MessageEmbed;
 
 public class CommandTraffic extends CommandBase
 {
@@ -14,12 +16,18 @@ public class CommandTraffic extends CommandBase
     @Override
     protected void doCommand(CommandEvent event)
     {
-        event.reply("Current traffic: " + TrafficManager.getTraffic() + "/10");
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.setColor(event.getSelfMember().getColor());
+        builder.setTitle("Server Traffic");
+        builder.addField(new MessageEmbed.Field("Current", TrafficManager.getTraffic() + "/10", true));
+
         if(event.getArgs().equalsIgnoreCase("details"))
         {
-            String reply = String.format("Details:\n#Messages: %s\n#Users: %s\nCurrent ratio: %s\nMax ratio: %s",
-                    TrafficManager.getNumMessages(), TrafficManager.getNumUsers(), TrafficManager.getLastRatio(), TrafficManager.getMaxRatio());
-            event.reply(reply);
+            builder.addField(new MessageEmbed.Field("Max ratio", String.valueOf(TrafficManager.getMaxRatio()), true));
+            builder.addField(new MessageEmbed.Field("#Messages", String.valueOf(TrafficManager.getNumMessages()), true));
+            builder.addField(new MessageEmbed.Field("#Users", String.valueOf(TrafficManager.getNumUsers()), true));
         }
+
+        event.reply(builder.build());
     }
 }
