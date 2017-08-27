@@ -55,7 +55,7 @@ public abstract class CommandBase extends Command
         if(MDCBot.isCommandDisabled(name))
             debug(event, "Command '%s' is disabled", event.getMessage().getContent());
         else if(!isAllowedToUseCommand(event.getMember()))
-            debug(event, "You need to be a bot %s to use this command", rolePermission);
+            debug(event, "You need to be a %s to use this command", rolePermission);
         else
         {
             debug(event, "Executing command '%s'", event.getMessage().getContent());
@@ -118,16 +118,16 @@ public abstract class CommandBase extends Command
 
     private boolean isAllowedToUseCommand(Member member)
     {
-        if(member == null || rolePermission == null)
-            return false;
         switch(rolePermission)
         {
             case ADMIN:
                 return MDCBot.isMemberBotAdmin(member);
             case MODERATOR:
                 return MDCBot.isMemberBotModerator(member);
-            default:
+            case NONE:
                 return true;
+            default:
+                return false;
         }
     }
 }

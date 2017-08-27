@@ -31,9 +31,11 @@ public class TrafficManager extends ListenerAdapter
     private static List<DatedUser> users = new ArrayList<>();
     private static List<Date> messages = new ArrayList<>();
     private static float maxRatio = -1f;
+    private static Date maxRatioDateMin, maxRatioDateMax;
     private static float lastRatio = -1f;
     private static FileManager fm_users = new FileManager(MDCBot.SAVES_DIR,  MDCBot.TRAFFIC_USERS_FILE);
     private static FileManager fm_messages = new FileManager(MDCBot.SAVES_DIR,  MDCBot.TRAFFIC_MESSAGES_FILE);
+    private static FileManager fm_maxratio = new FileManager(MDCBot.SAVES_DIR,  MDCBot.TRAFFIC_MAXRATIO_FILE);
     private static boolean dataChanged = false;
 
     public static void init()
@@ -159,15 +161,45 @@ public class TrafficManager extends ListenerAdapter
         }
         Util.debug("Read %s messages from file", messages.size());
 
+        //Read max ratio
+        List<String> maxRatioFile = fm_maxratio.readFromFile();
+        if(!maxRatioFile.isEmpty())
+        {
+            String[] maxRatioSplit = maxRatioFile.get(0).split(",");
+            try
+            {
+                maxRatio = Float.parseFloat(maxRatioSplit[0]);
+                maxRatioDateMin = new Date(Long.parseLong(maxRatioSplit[1]));
+                maxRatioDateMax = new Date(Long.parseLong(maxRatioSplit[2]));
+            }
+            catch(NumberFormatException e)
+            {
+                e.printStackTrace();
+            }
+            Util.debug("Read max ratio from file");
+        }
+
         checkData();
     }
 
     private static float getRatio()
     {
         float ratio = lastRatio = (float) messages.size() / (float) users.size();
-        if(ratio > maxRatio)
-            maxRatio = ratio;
+        updateMaxRatio(ratio);
         return ratio;
+    }
+
+    private static void updateMaxRatio(float ratio)
+    {
+        if(ratio > maxRatio)
+        {
+            maxRatio = ratio;
+            maxRatioDateMin = messages.get(0);
+            maxRatioDateMax = messages.get(messages.size() - 1);
+            String toFile = maxRatio + "," + maxRatioDateMin.getTime() + "," + maxRatioDateMax.getTime();
+            fm_maxratio.writeToFile(toFile);
+            Util.debug("Updated max ratio to: %s, %s, %s", maxRatio, maxRatioDateMin, maxRatioDateMax);
+        }
     }
 
     public static int getNumUsers()

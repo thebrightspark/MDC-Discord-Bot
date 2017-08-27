@@ -44,18 +44,19 @@ public class MDCBot
     public static final File USER_POINTS_FILE = new File(SAVES_DIR, "user_points.txt");
     public static final File TRAFFIC_USERS_FILE = new File(SAVES_DIR, "traffic_users.txt");
     public static final File TRAFFIC_MESSAGES_FILE = new File(SAVES_DIR, "traffic_messages.txt");
+    public static final File TRAFFIC_MAXRATIO_FILE = new File(SAVES_DIR, "traffic_maxratio.txt");
 
     public static JDA jda;
     public static Logger LOG = Logger.getLogger(NAME);
     public static String PREFIX;
     public static TextChannel logChannel;
+    public static Role newMemberRole;
     public static EventWaiter waiter = new EventWaiter();
 
-    public static List<Command> commands = new ArrayList<>();
-    public static List<String> adminRoles = new ArrayList<>();
-    public static List<String> moderatorRoles = new ArrayList<>();
-
+    private static List<Command> commands = new ArrayList<>();
     private static List<String> disabledCommands = new ArrayList<>();
+    private static List<String> adminRoles = new ArrayList<>();
+    private static List<String> moderatorRoles = new ArrayList<>();
 
     public static List<User> users;
 
@@ -89,6 +90,7 @@ public class MDCBot
         addCommand(new CommandManagePoints());
         addCommand(new CommandGetUsersList());
         addCommand(new CommandTraffic());
+        addCommand(new CommandAcceptRules());
     }
 
     public static void main(String... args)
@@ -152,7 +154,11 @@ public class MDCBot
 
         //Find logs channel
         List<TextChannel> logChannels = jda.getTextChannelsByName(Config.get(EConfigs.LOG_CHANNEL_NAME), false);
-        if(! logChannels.isEmpty()) logChannel = logChannels.get(0);
+        if(!logChannels.isEmpty()) logChannel = logChannels.get(0);
+
+        //Find new member role
+        List<Role> roles = jda.getRolesByName(Config.get(EConfigs.NEW_MEMBER_ROLE), false);
+        if(!roles.isEmpty()) newMemberRole = roles.get(0);
 
         Config.save();
 
@@ -196,6 +202,7 @@ public class MDCBot
 
     public static boolean isMemberBotAdmin(Member member)
     {
+        if(member == null) return false;
         for(Role role : member.getRoles())
             for(String modRole : adminRoles)
                 if(modRole.equalsIgnoreCase(role.getName()))
@@ -205,6 +212,7 @@ public class MDCBot
 
     public static boolean isMemberBotModerator(Member member)
     {
+        if(member == null) return false;
         for(Role role : member.getRoles())
             for(String modRole : moderatorRoles)
                 if(modRole.equalsIgnoreCase(role.getName()))

@@ -8,7 +8,8 @@ public enum EConfigs
     LOG_CHANNEL_NAME("logs", true, false, false),
     DISABLED_COMMANDS("", true, true, false),
     ADMIN_ROLES("admin", true, true, false),
-    MOD_ROLES("moderator", true, true, false);
+    MOD_ROLES("moderator", true, true, false),
+    NEW_MEMBER_ROLE("New Recruit", true, false, false);
 
     public final String defaultValue;
     public final boolean canCommandModify, canHaveMultipleValues, needsRestart;
