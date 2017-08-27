@@ -32,7 +32,7 @@ public class CommandAcceptRules extends CommandBase
             if(member != null && !member.getRoles().isEmpty())
             {
                 GuildController gc = guild.getController();
-                gc.addSingleRoleToMember(member, MDCBot.newMemberRole); //TODO: Not sure what to do with the AuditableRestAction response?
+                gc.addSingleRoleToMember(member, MDCBot.newMemberRole).queue();
             }
         }
     }
