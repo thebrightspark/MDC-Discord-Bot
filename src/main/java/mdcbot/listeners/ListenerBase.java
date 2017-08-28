@@ -9,9 +9,9 @@ public class ListenerBase extends ListenerAdapter
     /**
      * Logs to the console and log channel
      */
-    private void log(LogLevel level, String text, Object... args)
+    protected void log(LogLevel level, String text, Object... args)
     {
-        Util.log(level, text, args);
+        Util.log(getClass(), level, text, args);
         Util.logChannel(level, text, args);
     }
 

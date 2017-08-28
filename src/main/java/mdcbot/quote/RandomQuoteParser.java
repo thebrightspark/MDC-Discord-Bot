@@ -7,9 +7,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.*;
-import java.util.stream.Stream;
 
 public class RandomQuoteParser {
     private Map<Long, String> quotes = new HashMap<>();
@@ -20,21 +18,21 @@ public class RandomQuoteParser {
 
     private void loadFile(String path) {
         File file = new File(MDCBot.RESOURCES_DIR + "/quotes/" + path + ".txt");
-        Util.debug("Loaded random quote file from " + file.getAbsolutePath());
+        Util.debug(getClass(), "Loaded random quote file from " + file.getAbsolutePath());
         try (FileReader fr = new FileReader(file); BufferedReader br = new BufferedReader(fr)) {
             String line, l = null;
-            Util.debug("Reading file...");
+            Util.debug(getClass(), "Reading file...");
             long num = 0;
             while ((line = br.readLine()) != null) {
                 num++;
                 if (line.startsWith("::")) {
                     String quote = line.substring(line.indexOf("::") + 2, line.lastIndexOf("::"));
-                    Util.debug("Loading quote into quote map: " + quote);
+                    Util.debug(getClass(), "Loading quote into quote map: " + quote);
                     quotes.put(num, quote);
                 }
             }
         } catch (IOException e) {
-            Util.error(e.getMessage());
+            Util.error(getClass(), e.getMessage());
         }
     }
 

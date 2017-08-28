@@ -5,12 +5,9 @@ import com.jagrosh.jdautilities.commandclient.CommandEvent;
 import mdcbot.LogLevel;
 import mdcbot.MDCBot;
 import mdcbot.Util;
-import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.User;
 
 import javax.annotation.Nullable;
-import java.time.Instant;
 
 public abstract class CommandBase extends Command
 {
@@ -84,7 +81,7 @@ public abstract class CommandBase extends Command
      */
     private void log(CommandEvent event, LogLevel level, String text, Object... args)
     {
-        Util.log(level, text, args);
+        Util.log(getClass(), level, text, args);
         Util.logChannel(level, event.getAuthor(), text, args);
     }
 

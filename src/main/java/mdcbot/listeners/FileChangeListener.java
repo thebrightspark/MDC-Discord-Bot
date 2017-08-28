@@ -2,7 +2,6 @@ package mdcbot.listeners;
 
 import mdcbot.MDCBot;
 import mdcbot.io.FileManager;
-import mdcbot.rule.ReadRules;
 import net.dv8tion.jda.core.entities.User;
 
 import java.io.File;
@@ -15,27 +14,31 @@ import java.util.concurrent.TimeUnit;
  * Right now it's just used for watching the rule.txt file for changes
  * But eventually we can adjust it to watch any file
  */
-public class FileChangeListener {
+public class FileChangeListener implements Runnable
+{
     private File file;
     public long lastModified;
+    private FileManager fm = new FileManager(MDCBot.RULES_DIR, this.file);
 
-    public FileChangeListener(File file){
-        this.file = file;
+    public static void watchFileForChanges(File fileToWatch){
+        ScheduledExecutorService ses = new ScheduledThreadPoolExecutor(1);
+        ses.scheduleAtFixedRate(new FileChangeListener(fileToWatch), 10, 30, TimeUnit.SECONDS);
     }
 
-    public void watchFileForChanges(){
-        ScheduledExecutorService ses = new ScheduledThreadPoolExecutor(1);
-        ses.scheduleAtFixedRate(()->{
-            if(this.file.lastModified() != this.lastModified) {
-                FileManager fm = new FileManager(MDCBot.RULES_DIR, this.file);
-                for (User user : MDCBot.users) {
-                    String contents = "";
-                    for (String s : fm.readFromFile()) {
-                        contents = contents.concat(s).concat("\n");
-                    }
-                    ReadRules.readRules(user, contents);
-                }
+    public FileChangeListener(File fileToWatch){
+        file = fileToWatch;
+        lastModified = fileToWatch.lastModified();
+    }
+
+    @Override
+    public void run(){
+        if(this.file.lastModified() != this.lastModified) {
+            StringBuilder sb = new StringBuilder();
+            fm.readFromFile().forEach(sb::append);
+            String contents = sb.toString();
+            for (User user : MDCBot.users) {
+                user.openPrivateChannel().queue((privateChannel -> privateChannel.sendMessage(contents).queue()));
             }
-        }, 10, 30, TimeUnit.SECONDS);
+        }
     }
 }

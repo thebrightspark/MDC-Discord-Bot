@@ -6,7 +6,6 @@ import mdcbot.points.UserPoints;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.ReadyEvent;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +26,7 @@ public class UserPointsIO {
         List<String> list = fm.readFromFile();
         Map<User, Integer> userPoints = new HashMap<>();
         for(String s : list){
-            Util.debug("Loading: " + s);
+            debug("Loading: " + s);
             if(s.contains(":")){
                 String name = s.substring(0, s.indexOf(":"));
                 String spoints = s.substring(s.indexOf(":")+1, s.length());
@@ -36,13 +35,18 @@ public class UserPointsIO {
                 Integer points = Integer.parseInt(spoints.trim());
                 User user = event.getJDA().getUserById(id);
                 if(user == null) {
-                    Util.debug("Could not find user with id: " + id + "; Skipping!");
+                    debug("Could not find user with id: " + id + "; Skipping!");
                     continue;
                 }
-                Util.debug("Loading points for: " + user.getName() + " - " + points);
+                debug("Loading points for: " + user.getName() + " - " + points);
                 userPoints.put(user, points);
             }
         }
         return userPoints;
+    }
+
+    private static void debug(String message, Object... args)
+    {
+        Util.debug(UserPointsIO.class, message, args);
     }
 }

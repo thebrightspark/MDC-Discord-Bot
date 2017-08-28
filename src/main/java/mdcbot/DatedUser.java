@@ -22,7 +22,7 @@ public class DatedUser
         }
         catch(NumberFormatException e)
         {
-            Util.error("Couldn't parse to DatedUser: " + fromString);
+            Util.error(getClass(), "Couldn't parse to DatedUser: " + fromString);
             e.printStackTrace();
             return;
         }

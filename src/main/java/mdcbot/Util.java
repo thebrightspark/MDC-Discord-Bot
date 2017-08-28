@@ -5,38 +5,49 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
+import org.apache.log4j.Logger;
 
 import java.awt.*;
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Util
 {
+    private static Map<Class, Logger> loggers = new HashMap<>();
+
+    private static Logger getLogger(Class clazz)
+    {
+        loggers.computeIfAbsent(clazz, Logger::getLogger);
+        return loggers.get(clazz);
+    }
+
     /**
      * Logs to the console
      */
-    public static void log(LogLevel level, String text, Object... args)
+    public static void log(Class clazz, LogLevel level, String text, Object... args)
     {
-        MDCBot.LOG.log(level.log4jLevel, String.format(text, args));
+       getLogger(clazz).log(level.log4jLevel, String.format(text, args));
     }
 
-    public static void info(String text, Object... args)
+    public static void info(Class clazz, String text, Object... args)
     {
-        log(LogLevel.INFO, text, args);
+        log(clazz, LogLevel.INFO, text, args);
     }
 
-    public static void error(String text, Object... args)
+    public static void error(Class clazz, String text, Object... args)
     {
-        log(LogLevel.ERROR, text, args);
+        log(clazz, LogLevel.ERROR, text, args);
     }
 
-    public static void warn(String text, Object... args)
+    public static void warn(Class clazz, String text, Object... args)
     {
-        log(LogLevel.WARN, text, args);
+        log(clazz, LogLevel.WARN, text, args);
     }
 
-    public static void debug(String text, Object... args)
+    public static void debug(Class clazz, String text, Object... args)
     {
-        log(LogLevel.DEBUG, text, args);
+        log(clazz, LogLevel.DEBUG, text, args);
     }
 
     /**

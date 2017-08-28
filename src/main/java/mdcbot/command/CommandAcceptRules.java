@@ -34,7 +34,7 @@ public class CommandAcceptRules extends CommandBase
             {
                 GuildController gc = guild.getController();
                 gc.addSingleRoleToMember(member, MDCBot.newMemberRole).queue();
-                Util.info("New member %s given the role %s in guild %s", member.getEffectiveName(), MDCBot.newMemberRole.getName(), guild.getName());
+                Util.info(getClass(), "New member %s given the role %s in guild %s", member.getEffectiveName(), MDCBot.newMemberRole.getName(), guild.getName());
             }
         }
     }

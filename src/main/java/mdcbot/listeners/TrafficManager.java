@@ -1,8 +1,8 @@
 package mdcbot.listeners;
 
 import mdcbot.DatedUser;
+import mdcbot.LogLevel;
 import mdcbot.MDCBot;
-import mdcbot.Util;
 import mdcbot.io.FileManager;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.ChannelType;
@@ -11,6 +11,8 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -28,6 +30,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class TrafficManager extends ListenerAdapter
 {
+    private static Logger log = Logger.getLogger(TrafficManager.class);
     private static List<DatedUser> users = new ArrayList<>();
     private static List<Date> messages = new ArrayList<>();
     private static float maxRatio = -1f;
@@ -70,7 +73,7 @@ public class TrafficManager extends ListenerAdapter
 
         //Record this message
         Date messageTimestamp = new Date(event.getMessage().getCreationTime().toEpochSecond() * 1000);
-        Util.info("Adding message: %s -> '%s'", messageTimestamp, event.getMessage().getContent());
+        info("Adding message: %s -> '%s'", messageTimestamp, event.getMessage().getContent());
         if(!hasUser(event.getAuthor()))
             users.add(new DatedUser(event.getAuthor(), messageTimestamp));
         messages.add(messageTimestamp);
@@ -134,7 +137,7 @@ public class TrafficManager extends ListenerAdapter
             sb.append(date.getTime()).append("\n");
         fm_messages.writeToFile(sb.toString());
 
-        Util.debug("Saved traffic data");
+        debug("Saved traffic data");
     }
 
     public static void readFromFiles()
@@ -143,7 +146,7 @@ public class TrafficManager extends ListenerAdapter
         users.clear();
         for(String line : fm_users.readFromFile())
             users.add(new DatedUser(line));
-        Util.debug("Read %s users from file", users.size());
+        debug("Read %s users from file", users.size());
 
         //Read messages
         messages.clear();
@@ -155,11 +158,11 @@ public class TrafficManager extends ListenerAdapter
             }
             catch(NumberFormatException e)
             {
-                Util.error("Couldn't parse to Date: " + line);
+                error("Couldn't parse to Date: " + line);
                 e.printStackTrace();
             }
         }
-        Util.debug("Read %s messages from file", messages.size());
+        debug("Read %s messages from file", messages.size());
 
         //Read max ratio
         List<String> maxRatioFile = fm_maxratio.readFromFile();
@@ -176,7 +179,7 @@ public class TrafficManager extends ListenerAdapter
             {
                 e.printStackTrace();
             }
-            Util.debug("Read max ratio from file");
+            debug("Read max ratio from file");
         }
 
         checkData();
@@ -184,9 +187,9 @@ public class TrafficManager extends ListenerAdapter
 
     private static float getRatio()
     {
-        float ratio = lastRatio = (float) messages.size() / (float) users.size();
-        updateMaxRatio(ratio);
-        return ratio;
+        float lastRatio = (float) messages.size() / (float) users.size();
+        updateMaxRatio(lastRatio);
+        return lastRatio;
     }
 
     private static void updateMaxRatio(float ratio)
@@ -198,7 +201,7 @@ public class TrafficManager extends ListenerAdapter
             maxRatioDateMax = messages.get(messages.size() - 1);
             String toFile = maxRatio + "," + maxRatioDateMin.getTime() + "," + maxRatioDateMax.getTime();
             fm_maxratio.writeToFile(toFile);
-            Util.debug("Updated max ratio to: %s, %s, %s", maxRatio, maxRatioDateMin, maxRatioDateMax);
+            debug("Updated max ratio to: %s, %s, %s", maxRatio, maxRatioDateMin, maxRatioDateMax);
         }
     }
 
@@ -228,5 +231,25 @@ public class TrafficManager extends ListenerAdapter
     public static float getMaxRatio()
     {
         return maxRatio;
+    }
+
+    private static void log(Level level, String message, Object... args)
+    {
+        log.log(level, String.format(message, args));
+    }
+
+    private static void info(String message, Object... args)
+    {
+        log(LogLevel.INFO.log4jLevel, message, args);
+    }
+
+    private static void debug(String message, Object... args)
+    {
+        log(LogLevel.DEBUG.log4jLevel, message, args);
+    }
+
+    private static void error(String message, Object... args)
+    {
+        log(LogLevel.ERROR.log4jLevel, message, args);
     }
 }

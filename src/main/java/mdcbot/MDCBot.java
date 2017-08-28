@@ -2,7 +2,6 @@ package mdcbot;
 
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
-import com.jagrosh.jdautilities.commandclient.examples.ShutdownCommand;
 import com.jagrosh.jdautilities.waiter.EventWaiter;
 import mdcbot.command.*;
 import mdcbot.listeners.FileChangeListener;
@@ -182,9 +181,7 @@ public class MDCBot
 
         LOG.info("Initialisation complete");
 
-        FileChangeListener fcl = new FileChangeListener(RULES_FILE);
-        fcl.lastModified = RULES_FILE.lastModified();
-        fcl.watchFileForChanges();
+        FileChangeListener.watchFileForChanges(RULES_FILE);
     }
 
     public static void reloadDisabledCommands()
