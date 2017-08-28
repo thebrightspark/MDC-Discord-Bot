@@ -22,8 +22,6 @@ import java.net.MalformedURLException;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class MDCBot
 {
@@ -52,13 +50,13 @@ public class MDCBot
     public static final File RULES_CACHE_FILE = new File(RULES_DIR,"rules_cache.txt");
 
     public static JDA jda;
-    public static Logger LOG = Logger.getLogger(NAME);
     public static String PREFIX;
     public static TextChannel logChannel;
     public static Role newMemberRole;
     public static Role mutedRole;
     public static EventWaiter waiter = new EventWaiter();
 
+    private static Logger log = Util.getLogger(MDCBot.class);
     private static List<Command> commands = new ArrayList<>();
     private static List<String> disabledCommands = new ArrayList<>();
     private static List<String> adminRoles = new ArrayList<>();
@@ -82,9 +80,9 @@ public class MDCBot
     private static void addCommand(Command command)
     {
         if(!commands.add(command))
-            LOG.warn("Tried to add duplicate command! Command not added: " + command.getName());
+            log.warn("Tried to add duplicate command! Command not added: " + command.getName());
         else
-            LOG.info("Added command '" + command.getName() + "'");
+            log.info("Added command '" + command.getName() + "'");
     }
 
     public static void initCommands()
@@ -105,17 +103,17 @@ public class MDCBot
 
     public static void main(String... args)
     {
-        LOG.info("Initialising bot...");
+        log.info("Initialising bot...");
 
         Config.init();
         if(!Config.hasValue(EConfigs.OWNER_ID))
         {
-            LOG.error("Config value '" + EConfigs.OWNER_ID + "' has not been set!");
+            log.error("Config value '" + EConfigs.OWNER_ID + "' has not been set!");
             System.exit(0);
         }
         if(!Config.hasValue(EConfigs.TOKEN))
         {
-            LOG.error("Config value '" + EConfigs.TOKEN + "' has not been set!");
+            log.error("Config value '" + EConfigs.TOKEN + "' has not been set!");
             System.exit(0);
         }
 
@@ -179,7 +177,7 @@ public class MDCBot
 
         TrafficManager.init();
 
-        LOG.info("Initialisation complete");
+        log.info("Initialisation complete");
 
         FileChangeListener.watchFileForChanges(RULES_FILE);
     }

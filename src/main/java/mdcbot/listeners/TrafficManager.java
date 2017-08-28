@@ -3,6 +3,7 @@ package mdcbot.listeners;
 import mdcbot.DatedUser;
 import mdcbot.LogLevel;
 import mdcbot.MDCBot;
+import mdcbot.Util;
 import mdcbot.io.FileManager;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.ChannelType;
@@ -30,7 +31,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class TrafficManager extends ListenerAdapter
 {
-    private static Logger log = Logger.getLogger(TrafficManager.class);
+    private static Logger log = Util.getLogger(TrafficManager.class);
     private static List<DatedUser> users = new ArrayList<>();
     private static List<Date> messages = new ArrayList<>();
     private static float maxRatio = -1f;

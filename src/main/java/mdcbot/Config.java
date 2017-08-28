@@ -1,11 +1,13 @@
 package mdcbot;
 
+import org.apache.log4j.Logger;
+
 import java.io.*;
 import java.util.*;
-import java.util.function.Consumer;
 
 public class Config
 {
+    private static Logger log = Util.getLogger(Config.class);
     private static Map<String, String> config = new HashMap<>();
 
     public static String set(EConfigs configKey, String configValue)
@@ -87,15 +89,15 @@ public class Config
 
     public static void init()
     {
-        MDCBot.LOG.info("Config: " + MDCBot.CONFIG_FILE.getAbsolutePath());
+        log.info("Config: " + MDCBot.CONFIG_FILE.getAbsolutePath());
 
         if(!MDCBot.CONFIG_FILE.exists())
         {
             try
             {
                 if(!MDCBot.CONFIG_FILE.createNewFile())
-                    MDCBot.LOG.error("Couldn't create config.properties");
-                MDCBot.LOG.info("Created new config.properties");
+                    log.error("Couldn't create config.properties");
+                log.info("Created new config.properties");
             }
             catch(IOException e)
             {
@@ -141,7 +143,7 @@ public class Config
                 if(o instanceof String && o2 instanceof String)
                 {
                     config.put((String) o, (String) o2);
-                    MDCBot.LOG.debug("Loaded config -> K: " + o + ", V: " + o2);
+                    log.debug("Loaded config -> K: " + o + ", V: " + o2);
                 }
             });
         }

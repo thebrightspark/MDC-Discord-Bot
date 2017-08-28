@@ -16,10 +16,15 @@ public class Util
 {
     private static Map<Class, Logger> loggers = new HashMap<>();
 
-    private static Logger getLogger(Class clazz)
+    private static Logger getLoggerFromMap(Class clazz)
     {
-        loggers.computeIfAbsent(clazz, Logger::getLogger);
+        loggers.computeIfAbsent(clazz, Util::getLogger);
         return loggers.get(clazz);
+    }
+
+    public static Logger getLogger(Class clazz)
+    {
+        return Logger.getLogger(clazz.getSimpleName());
     }
 
     /**
@@ -27,7 +32,7 @@ public class Util
      */
     public static void log(Class clazz, LogLevel level, String text, Object... args)
     {
-       getLogger(clazz).log(level.log4jLevel, String.format(text, args));
+       getLoggerFromMap(clazz).log(level.log4jLevel, String.format(text, args));
     }
 
     public static void info(Class clazz, String text, Object... args)

@@ -1,6 +1,7 @@
 package mdcbot.listeners;
 
 import mdcbot.MDCBot;
+import mdcbot.Util;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -51,7 +52,7 @@ public class MessageReceivedListener extends ListenerAdapter
 
         if(isBot) userName = "BOT:" + userName;
 
-        MDCBot.LOG.info("(" + guildName + ")[" + channelName + "]<" + userName + ">: " + messageText);
+        Util.info(getClass(),"(" + guildName + ")[" + channelName + "]<" + userName + ">: " + messageText);
 
 
         if(messageText.equals("hello"))
