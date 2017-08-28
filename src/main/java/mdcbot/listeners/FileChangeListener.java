@@ -18,7 +18,7 @@ public class FileChangeListener implements Runnable
 {
     private File file;
     public long lastModified;
-    private FileManager fm = new FileManager(MDCBot.RULES_DIR, this.file);
+    private FileManager fm;
 
     public static void watchFileForChanges(File fileToWatch){
         ScheduledExecutorService ses = new ScheduledThreadPoolExecutor(1);
@@ -28,6 +28,7 @@ public class FileChangeListener implements Runnable
     public FileChangeListener(File fileToWatch){
         file = fileToWatch;
         lastModified = fileToWatch.lastModified();
+        fm = new FileManager(MDCBot.RULES_DIR, file);
     }
 
     @Override

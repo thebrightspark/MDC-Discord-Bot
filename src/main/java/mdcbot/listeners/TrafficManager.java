@@ -187,7 +187,7 @@ public class TrafficManager extends ListenerAdapter
 
     private static float getRatio()
     {
-        float lastRatio = (float) messages.size() / (float) users.size();
+        lastRatio = (float) messages.size() / (float) users.size();
         updateMaxRatio(lastRatio);
         return lastRatio;
     }
