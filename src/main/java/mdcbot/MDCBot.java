@@ -4,6 +4,7 @@ import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
 import com.jagrosh.jdautilities.waiter.EventWaiter;
 import mdcbot.command.*;
+import mdcbot.debug.IDebuggable;
 import mdcbot.listeners.FileChangeListener;
 import mdcbot.listeners.MutedListener;
 import mdcbot.listeners.TrafficManager;
@@ -15,9 +16,11 @@ import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
 import org.apache.log4j.Logger;
+import org.reflections.Reflections;
 
 import javax.security.auth.login.LoginException;
 import java.io.File;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
 import java.util.*;
@@ -47,7 +50,6 @@ public class MDCBot
     public static final File TRAFFIC_MESSAGES_FILE = new File(SAVES_DIR, "traffic_messages.txt");
     public static final File TRAFFIC_MAXRATIO_FILE = new File(SAVES_DIR, "traffic_maxratio.txt");
     public static final File RULES_FILE = new File(RULES_DIR,"rules.txt");
-    public static final File RULES_CACHE_FILE = new File(RULES_DIR,"rules_cache.txt");
 
     public static JDA jda;
     public static String PREFIX;
@@ -99,6 +101,7 @@ public class MDCBot
         addCommand(new CommandMute());
         addCommand(new CommandAnnounce());
         addCommand(new CommandShutdown());
+        addCommand(new CommandDebug());
     }
 
     public static void main(String... args)

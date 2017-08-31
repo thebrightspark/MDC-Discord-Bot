@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 public class FileChangeListener implements Runnable
 {
     private File file;
-    public long lastModified;
+    private long lastModified;
     private FileManager fm;
 
     public static void watchFileForChanges(File fileToWatch){

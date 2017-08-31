@@ -18,7 +18,7 @@ public class CommandManagePoints extends CommandBase{
         if(args[1].equals(event.getAuthor().getId())){
             event.reply("You cannot edit your own points!");
         }else {
-            for (User user : MDCBot.users) {
+            for (User user : event.getJDA().getUsers()) {
                 if(args[1].equals(user.getAsMention())){
                     isMentioned = true;
                 }
@@ -32,12 +32,12 @@ public class CommandManagePoints extends CommandBase{
                         user.openPrivateChannel().queue((channel) -> channel.sendMessage("You now have " + UserPoints.getUsersPoints(user) + " points. If you think this is a problem, contact an admin.").queue());
                     }
                 } else if (args.length == 2) {
-                    if (args[0].equalsIgnoreCase("get") || isMentioned) {
-                        if (user.getId().equals(args[1])) {
+                    if (args[0].equalsIgnoreCase("get")) {
+                        if (user.getId().equals(args[1]) || isMentioned) {
                             event.reply(user.getName() + " has " + UserPoints.getUsersPoints(user) + " points.");
                         }
                     }
-                } else {
+                } else if(event.getArgs().isEmpty()){
                     event.replyError("That doesn't tickle me jones. Please use points <get:add:remove> <user_id> [amount]");
                 }
             }
