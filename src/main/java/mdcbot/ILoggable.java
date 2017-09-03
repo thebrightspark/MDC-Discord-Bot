@@ -1,5 +1,7 @@
 package mdcbot;
 
+import mdcbot.utils.Util;
+
 public interface ILoggable
 {
     default void log(LogLevel level, String message, Object... args)

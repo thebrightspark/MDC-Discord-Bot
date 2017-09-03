@@ -2,17 +2,15 @@ package mdcbot.command;
 
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 import mdcbot.MDCBot;
-import mdcbot.Util;
 import mdcbot.debug.EnumMacros;
 import mdcbot.debug.IDebuggable;
+import mdcbot.utils.ReflectUtils;
+import net.dv8tion.jda.core.events.Event;
 import org.reflections.Reflections;
 
 import java.io.File;
-import java.lang.reflect.*;
-import java.util.List;
+import java.lang.reflect.Method;
 import java.util.Set;
-
-import static mdcbot.debug.EnumMacros.DEBUG_ALL;
 
 public class CommandDebug extends CommandBase{
     public CommandDebug() {
@@ -21,23 +19,31 @@ public class CommandDebug extends CommandBase{
 
     @Override
     protected void doCommand(CommandEvent event) {
-//        String[] args = Util.splitCommandArgs(event.getArgs());
         if(event.getArgs().isEmpty()){
-            Reflections reflections = new Reflections("mdcbot");
-            Set<Class<? extends IDebuggable>> debuggables = reflections.getSubTypesOf(IDebuggable.class);
-            for(Class<? extends IDebuggable> debug : debuggables){
-                try {
-                    Method meth = debug.getMethod("debug", EnumMacros.class);
-                    Class<?> clazz = meth.getDeclaringClass();
-                    meth.setAccessible(true);
-                    Object o = clazz.getDeclaredConstructor(File.class, File.class).newInstance(MDCBot.RULES_DIR, MDCBot.RULES_FILE);
-                    meth.invoke(o, DEBUG_ALL);
-                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                    e.printStackTrace();
-                }catch(InstantiationException e){
-                    e.printStackTrace();
-                    error(event, e.getMessage());
+            reflectDebugMethod(event, EnumMacros.DEBUG_ALL);
+        }else if(event.getArgs().equals("files")){
+            reflectDebugMethod(event, EnumMacros.DEBUG_FILES);
+        }else if(event.getArgs().equals("commands")){
+            reflectDebugMethod(event, EnumMacros.DEBUG_COMMANDS);
+        }else if(event.getArgs().equals("listeners")){
+            reflectDebugMethod(event, EnumMacros.DEBUG_LISTENERS);
+        }else if(event.getArgs().equals("messages")){
+            reflectDebugMethod(event, EnumMacros.DEBUG_MESSAGES);
+        }
+    }
+
+    private void reflectDebugMethod(CommandEvent event, EnumMacros debugMode){
+        Reflections reflections = new Reflections("mdcbot");
+        Set<Class<? extends IDebuggable>> debuggables = reflections.getSubTypesOf(IDebuggable.class);
+        for(Class<? extends IDebuggable> debuggable : debuggables) {
+            try {
+                Method meth = debuggable.getMethod("debug", EnumMacros.class);
+                Class<?> declaringClass = meth.getDeclaringClass();
+                if(declaringClass.getName().equals("FileManager")){
+                    ReflectUtils.getDebugMethods(meth, debugMode, declaringClass, new Class[]{File.class, File.class}, new Object[]{MDCBot.RULES_DIR, MDCBot.RULES_FILE});
                 }
+            }catch(NoSuchMethodException e){
+                error(event, e.getMessage());
             }
         }
     }

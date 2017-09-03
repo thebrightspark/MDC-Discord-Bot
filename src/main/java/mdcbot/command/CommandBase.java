@@ -4,7 +4,7 @@ import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 import mdcbot.LogLevel;
 import mdcbot.MDCBot;
-import mdcbot.Util;
+import mdcbot.utils.Util;
 import net.dv8tion.jda.core.entities.Member;
 
 import javax.annotation.Nullable;

@@ -2,7 +2,7 @@ package mdcbot.command;
 
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 import mdcbot.MDCBot;
-import mdcbot.Util;
+import mdcbot.utils.Util;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;

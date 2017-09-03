@@ -1,7 +1,7 @@
 package mdcbot.command;
 
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
-import mdcbot.Util;
+import mdcbot.utils.Util;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
 

@@ -1,5 +1,7 @@
-package mdcbot;
+package mdcbot.utils;
 
+import mdcbot.LogLevel;
+import mdcbot.MDCBot;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;

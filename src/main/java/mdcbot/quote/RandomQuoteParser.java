@@ -1,7 +1,7 @@
 package mdcbot.quote;
 
 import mdcbot.MDCBot;
-import mdcbot.Util;
+import mdcbot.utils.Util;
 
 import java.io.BufferedReader;
 import java.io.File;

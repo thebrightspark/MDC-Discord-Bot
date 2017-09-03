@@ -1,7 +1,6 @@
 package mdcbot.listeners;
 
-import mdcbot.MDCBot;
-import mdcbot.Util;
+import mdcbot.utils.Util;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;

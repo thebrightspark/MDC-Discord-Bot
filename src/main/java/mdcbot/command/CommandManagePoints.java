@@ -1,8 +1,7 @@
 package mdcbot.command;
 
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
-import mdcbot.MDCBot;
-import mdcbot.Util;
+import mdcbot.utils.Util;
 import mdcbot.points.UserPoints;
 import net.dv8tion.jda.core.entities.User;
 

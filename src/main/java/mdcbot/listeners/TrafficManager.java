@@ -3,7 +3,7 @@ package mdcbot.listeners;
 import mdcbot.DatedUser;
 import mdcbot.LogLevel;
 import mdcbot.MDCBot;
-import mdcbot.Util;
+import mdcbot.utils.Util;
 import mdcbot.io.FileManager;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.ChannelType;

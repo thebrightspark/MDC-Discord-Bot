@@ -4,7 +4,7 @@ import com.jagrosh.jdautilities.commandclient.CommandEvent;
 import mdcbot.Config;
 import mdcbot.EConfigs;
 import mdcbot.MDCBot;
-import mdcbot.Util;
+import mdcbot.utils.Util;
 
 public class CommandConfig extends CommandBase
 {

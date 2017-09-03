@@ -1,7 +1,7 @@
 package mdcbot.io;
 
 import mdcbot.MDCBot;
-import mdcbot.Util;
+import mdcbot.utils.Util;
 import mdcbot.points.UserPoints;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.ReadyEvent;
