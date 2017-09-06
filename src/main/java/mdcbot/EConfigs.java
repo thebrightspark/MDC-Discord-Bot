@@ -10,7 +10,8 @@ public enum EConfigs
     ADMIN_ROLES("Admin", true, true, false),
     MOD_ROLES("Moderator", true, true, false),
     NEW_MEMBER_ROLE("New Recruit", true, false, false),
-    MUTED_ROLE("Muted", true, false, false);
+    MUTED_ROLE("Muted", true, false, false),
+    DEFAULT_MUTE_TIME("600", true, false, false);
 
     public final String defaultValue;
     public final boolean canCommandModify, canHaveMultipleValues, needsRestart;

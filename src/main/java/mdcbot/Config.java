@@ -73,6 +73,21 @@ public class Config
         return value;
     }
 
+    public static int getInt(EConfigs configKey)
+    {
+        String value = get(configKey);
+        try
+        {
+            return Integer.parseInt(value);
+        }
+        catch(NumberFormatException e)
+        {
+            Util.error(Config.class, "Couldn't parse config %s value of '%s' to an integer!", configKey, value);
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     public static String getInternal(EConfigs configKey)
     {
         return config.get(configKey.toString());
