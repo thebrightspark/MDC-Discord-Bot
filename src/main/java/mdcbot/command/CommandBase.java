@@ -68,10 +68,10 @@ public abstract class CommandBase extends Command
     /**
      * Call this method when a command fails at any point
      */
-    protected void fail(CommandEvent event, @Nullable String message)
+    protected void fail(CommandEvent event, @Nullable String message, Object... args)
     {
         if(message != null)
-            event.reply(message);
+            event.reply(String.format(message, args));
         if(event.getClient().getListener()!=null)
             event.getClient().getListener().onTerminatedCommand(event, this);
     }

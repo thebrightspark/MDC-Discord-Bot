@@ -3,6 +3,7 @@ package mdcbot.command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 import mdcbot.EConfigs;
 import mdcbot.MDCBot;
+import mdcbot.MuteHandler;
 import mdcbot.utils.Util;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
@@ -23,7 +24,8 @@ public class CommandMute extends CommandBase
         if(MDCBot.mutedRole == null)
         {
             fail(event, "No muted role. Set one using the command:\n" +
-                    MDCBot.PREFIX + "config " + EConfigs.MUTED_ROLE + " <role name>");
+                    "%s config %s <role name>", MDCBot.PREFIX, EConfigs.MUTED_ROLE);
+            return;
         }
 
         String args = event.getArgs();
@@ -53,8 +55,8 @@ public class CommandMute extends CommandBase
             {
                 if(members.size() > 1)
                 {
-                    fail(event, "Found " + members.size() + " with the name '" + args + "'.\n" +
-                            "Please use `@` mention the user with this command instead.");
+                    fail(event, "Found %s members with the name '%s'.\n" +
+                            "Please use `@` mention the user with this command instead.", members.size(), args);
                     return;
                 }
                 member = members.get(0);
@@ -63,17 +65,27 @@ public class CommandMute extends CommandBase
 
         if(member == null)
         {
-            fail(event, "Couldn't find member '" + args + "'");
+            fail(event, "Couldn't find member '%s'", args);
         }
         else if(member.getRoles().contains(MDCBot.mutedRole))
         {
-            fail(event, "Member '" + member.getEffectiveName() + "' is already muted");
+            long timeLeft = MuteHandler.getMutedTimeLeftMins(member);
+            fail(event, "Member '%s' is already muted for %s more minutes", member.getEffectiveName(), timeLeft);
         }
         else
         {
-            info(event, "Member %s has been muted", member.getEffectiveName());
-            event.reply(Util.createBotMessage(guild, "Member %s (%s) has been muted", member.getEffectiveName(), member.getRoles().get(0).getName()));
-            guild.getController().addSingleRoleToMember(member, MDCBot.mutedRole).queue();
+            //TODO: Get mute time length from args
+            if(MuteHandler.muteMember(member))
+            {
+                info(event, "Member '%s' has been muted", member.getEffectiveName());
+                event.reply(Util.createBotMessage(guild, "Member '%s' (%s) has been muted", member.getEffectiveName(), member.getRoles().get(0).getName()));
+            }
+            else
+            {
+                long timeLeft = MuteHandler.getMutedTimeLeftMins(member);
+                warn(event, "Member '%s' is already muted for %s more minutes", member.getEffectiveName(), timeLeft);
+                event.reply(Util.createBotMessage(guild, "Failed to mute member '%s' (%s)", member.getEffectiveName(), member.getRoles().get(0).getName()));
+            }
         }
     }
 }

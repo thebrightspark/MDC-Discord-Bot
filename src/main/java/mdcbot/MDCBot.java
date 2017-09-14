@@ -177,6 +177,7 @@ public class MDCBot
         Config.save();
 
         TrafficManager.init();
+        MuteHandler.init();
 
         log.info("Initialisation complete");
 
