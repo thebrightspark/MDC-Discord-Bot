@@ -1,6 +1,7 @@
 package mdcbot.command;
 
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
+import mdcbot.Config;
 import mdcbot.EConfigs;
 import mdcbot.MDCBot;
 import mdcbot.MuteHandler;
@@ -8,14 +9,13 @@ import mdcbot.utils.Util;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 
-import java.util.List;
-
 public class CommandMute extends CommandBase
 {
     public CommandMute()
     {
         super("mute", "Mutes a member by giving them the configured muted role");
         removeSentMessage = true;
+        rolePermission = RolePermission.MODERATOR;
     }
 
     @Override
@@ -35,56 +35,67 @@ public class CommandMute extends CommandBase
             return;
         }
 
-        Guild guild = event.getGuild();
-        Member member = null;
+        int time = Config.getInt(EConfigs.DEFAULT_MUTE_TIME);
 
-        //If the user is tagged, extract just the user ID
-        if(args.startsWith("<@"))
-            args = args.substring(2, args.length() - 1);
-
-        try
+        //Try get the time from the first argument
+        String[] argSplit = Util.splitCommandArgs(args);
+        boolean gotTimeFromArgs = false;
+        if(argSplit.length > 1)
         {
-            //Try parse argument as a user ID
-            member = guild.getMemberById(args);
-        }
-        catch(NumberFormatException e)
-        {
-            //Try parse argument as a member name
-            List<Member> members = guild.getMembersByEffectiveName(args, true);
-            if(!members.isEmpty())
+            try
             {
-                if(members.size() > 1)
-                {
-                    fail(event, "Found %s members with the name '%s'.\n" +
-                            "Please use `@` mention the user with this command instead.", members.size(), args);
-                    return;
-                }
-                member = members.get(0);
+                time = Integer.parseInt(argSplit[0]);
+                gotTimeFromArgs = true;
+            }
+            catch(NumberFormatException e)
+            {
+                //Do nothing
             }
         }
 
-        if(member == null)
+        if(gotTimeFromArgs)
         {
-            fail(event, "Couldn't find member '%s'", args);
+            //Get member after time argument
+            StringBuilder sb = new StringBuilder();
+            for(int i = 1; i < argSplit.length - 1; i++)
+            {
+                if(i > 1) sb.append(" ");
+                sb.append(argSplit[i]);
+            }
+            args = sb.toString();
+
+            if(args.isEmpty())
+            {
+                fail(event, "Must provide a member to mute");
+                return;
+            }
         }
-        else if(member.getRoles().contains(MDCBot.mutedRole))
+
+        Guild guild = event.getGuild();
+        Member member = getMemberFromString(event, guild, args);
+
+        if(member == null) return;
+        if(member.getRoles().contains(MDCBot.mutedRole))
         {
+            //Member already muted
             long timeLeft = MuteHandler.getMutedTimeLeftMins(member);
             fail(event, "Member '%s' is already muted for %s more minutes", member.getEffectiveName(), timeLeft);
         }
         else
         {
-            //TODO: Get mute time length from args
-            if(MuteHandler.muteMember(member))
+            String memberMainRole = member.getRoles().get(0).getName();
+            if(MuteHandler.muteMember(member, time))
             {
+                //Member muted
                 info(event, "Member '%s' has been muted", member.getEffectiveName());
-                event.reply(Util.createBotMessage(guild, "Member '%s' (%s) has been muted", member.getEffectiveName(), member.getRoles().get(0).getName()));
+                event.reply(Util.createBotMessage(guild, "Member '%s' (%s) has been muted", member.getEffectiveName(), memberMainRole));
             }
             else
             {
+                //Failed to mute member
                 long timeLeft = MuteHandler.getMutedTimeLeftMins(member);
                 warn(event, "Member '%s' is already muted for %s more minutes", member.getEffectiveName(), timeLeft);
-                event.reply(Util.createBotMessage(guild, "Failed to mute member '%s' (%s)", member.getEffectiveName(), member.getRoles().get(0).getName()));
+                event.reply(Util.createBotMessage(guild, "Failed to mute member '%s' (%s)", member.getEffectiveName(), memberMainRole));
             }
         }
     }

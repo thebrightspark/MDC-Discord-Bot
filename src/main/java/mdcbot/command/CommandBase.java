@@ -5,9 +5,11 @@ import com.jagrosh.jdautilities.commandclient.CommandEvent;
 import mdcbot.LogLevel;
 import mdcbot.MDCBot;
 import mdcbot.utils.Util;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public abstract class CommandBase extends Command
 {
@@ -118,5 +120,42 @@ public abstract class CommandBase extends Command
             default:
                 return false;
         }
+    }
+
+    /**
+     * Gets the member from the guild if they exist.
+     * @param memberString Can be either the member's display name or their @ mention.
+     */
+    public Member getMemberFromString(CommandEvent event, Guild guild, String memberString)
+    {
+        Member member = null;
+
+        //If the user is tagged, extract just the user ID
+        if(memberString.startsWith("<@"))
+            memberString = memberString.substring(2, memberString.length() - 1);
+
+        try
+        {
+            //Try parse argument as a user ID
+            member = guild.getMemberById(memberString);
+            if(member == null) fail(event, "Couldn't find member '%s'", memberString);
+        }
+        catch(NumberFormatException e)
+        {
+            //Try parse argument as a member name
+            List<Member> members = guild.getMembersByEffectiveName(memberString, true);
+            if(!members.isEmpty())
+            {
+                if(members.size() > 1)
+                {
+                    fail(event, "Found %s members with the name '%s'.\n" +
+                            "Please use `@` mention the user with this command instead.", members.size(), memberString);
+                }
+                else
+                    member = members.get(0);
+            }
+        }
+
+        return member;
     }
 }

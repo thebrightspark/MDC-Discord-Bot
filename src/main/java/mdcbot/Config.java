@@ -88,7 +88,7 @@ public class Config
         return 0;
     }
 
-    public static String getInternal(EConfigs configKey)
+    private static String getInternal(EConfigs configKey)
     {
         return config.get(configKey.toString());
     }
