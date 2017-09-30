@@ -1,5 +1,6 @@
 package mdcbot;
 
+import mdcbot.utils.Util;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
@@ -22,7 +23,7 @@ public class MuteHandler
     public static void init()
     {
         ScheduledExecutorService service = new ScheduledThreadPoolExecutor(1);
-        service.scheduleAtFixedRate(MuteHandler::checkMutedMembers, 10, 30, TimeUnit.SECONDS);
+        service.scheduleAtFixedRate(MuteHandler::checkMutedMembers, 60, 15, TimeUnit.SECONDS);
     }
 
     public static boolean muteMember(Member member)
@@ -57,7 +58,7 @@ public class MuteHandler
         gc.removeRolesFromMember(member, member.getRoles()).queue();
 
         //Add muted role to member
-        gc.addSingleRoleToMember(member, MDCBot.mutedRole).queue();
+        gc.addSingleRoleToMember(member, MDCBot.mutedRole).queueAfter(1, TimeUnit.SECONDS);
 
         return true;
     }
@@ -69,8 +70,16 @@ public class MuteHandler
     public static boolean unmuteMember(Member member)
     {
         User user = member.getUser();
-        if(mutedMembers.containsKey(user))
+        if(!mutedMembers.containsKey(user))
+        {
+            if(member.getRoles().contains(MDCBot.mutedRole))
+            {
+                GuildController gc = member.getGuild().getController();
+                gc.removeSingleRoleFromMember(member, MDCBot.mutedRole).queue();
+                return true;
+            }
             return false;
+        }
 
         //Get cached roles for member
         List<Role> rolesToAdd = new ArrayList<>();
@@ -88,7 +97,7 @@ public class MuteHandler
 
         //Remove muted role from member
         if(MDCBot.mutedRole != null)
-            gc.removeSingleRoleFromMember(member, MDCBot.mutedRole).queue();
+            gc.removeSingleRoleFromMember(member, MDCBot.mutedRole).queueAfter(1, TimeUnit.SECONDS);
 
         mutedMembers.remove(user);
         unmuteTimes.remove(user);
@@ -122,7 +131,10 @@ public class MuteHandler
                 {
                     Member member = guild.getMember(user);
                     if(member != null)
+                    {
                         unmuteMember(member);
+                        Util.logChannel(LogLevel.INFO, "Member %s has been auto-unmuted", member.getEffectiveName());
+                    }
                 }
             }
         }

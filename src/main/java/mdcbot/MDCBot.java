@@ -97,6 +97,7 @@ public class MDCBot
         addCommand(new CommandAcceptRules());
         addCommand(new CommandGetRolesList());
         addCommand(new CommandMute());
+        addCommand(new CommandUnmute());
         addCommand(new CommandAnnounce());
         addCommand(new CommandShutdown());
         addCommand(new CommandDebug());

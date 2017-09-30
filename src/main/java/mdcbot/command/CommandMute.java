@@ -57,7 +57,7 @@ public class CommandMute extends CommandBase
         {
             //Get member after time argument
             StringBuilder sb = new StringBuilder();
-            for(int i = 1; i < argSplit.length - 1; i++)
+            for(int i = 1; i < argSplit.length; i++)
             {
                 if(i > 1) sb.append(" ");
                 sb.append(argSplit[i]);
@@ -87,8 +87,8 @@ public class CommandMute extends CommandBase
             if(MuteHandler.muteMember(member, time))
             {
                 //Member muted
-                info(event, "Member '%s' has been muted", member.getEffectiveName());
-                event.reply(Util.createBotMessage(guild, "Member '%s' (%s) has been muted", member.getEffectiveName(), memberMainRole));
+                info(event, "Member '%s' has been muted for %s mins", member.getEffectiveName(), time);
+                event.reply(Util.createBotMessage(guild, "Member '%s' (%s) has been muted for %s mins", member.getEffectiveName(), memberMainRole, time));
             }
             else
             {
