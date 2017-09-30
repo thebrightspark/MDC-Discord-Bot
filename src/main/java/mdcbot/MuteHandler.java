@@ -133,7 +133,8 @@ public class MuteHandler
                     if(member != null)
                     {
                         unmuteMember(member);
-                        Util.logChannel(LogLevel.INFO, "Member %s has been auto-unmuted", member.getEffectiveName());
+                        Util.logChannel(LogLevel.INFO, "%s has been auto-unmuted", member.getEffectiveName());
+                        Util.info(MuteHandler.class, "%s has been auto-unmuted", member.getEffectiveName());
                     }
                 }
             }

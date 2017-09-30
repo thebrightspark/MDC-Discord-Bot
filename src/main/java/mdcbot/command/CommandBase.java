@@ -7,6 +7,7 @@ import mdcbot.MDCBot;
 import mdcbot.utils.Util;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.MessageEmbed;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -67,14 +68,24 @@ public abstract class CommandBase extends Command
 
     protected abstract void doCommand(CommandEvent event);
 
+    protected void reply(CommandEvent event, String message, Object... args)
+    {
+        event.getChannel().sendMessage(Util.createBotMessage(event.getGuild(), message, args)).queue();
+    }
+
+    protected void reply(CommandEvent event, MessageEmbed message)
+    {
+        event.getChannel().sendMessage(message).queue();
+    }
+
     /**
      * Call this method when a command fails at any point
      */
     protected void fail(CommandEvent event, @Nullable String message, Object... args)
     {
         if(message != null)
-            event.reply(String.format(message, args));
-        if(event.getClient().getListener()!=null)
+            reply(event, message, args);
+        if(event.getClient().getListener() != null)
             event.getClient().getListener().onTerminatedCommand(event, this);
     }
 

@@ -26,7 +26,7 @@ public class CommandAnnounce extends CommandBase
             builder.setTitle("Announcement");
             builder.setDescription(event.getArgs());
             builder.setColor(member.getColor());
-            event.reply(builder.build());
+            reply(event, builder.build());
         }
     }
 }

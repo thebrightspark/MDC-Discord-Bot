@@ -29,6 +29,6 @@ public class CommandTraffic extends CommandBase
             builder.addField(new MessageEmbed.Field("#Users", String.valueOf(TrafficManager.getNumUsers()), true));
         }
 
-        event.reply(builder.build());
+        reply(event, builder.build());
     }
 }

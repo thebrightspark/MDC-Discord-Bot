@@ -43,14 +43,14 @@ public class CommandUnmute extends CommandBase
             if(MuteHandler.unmuteMember(member))
             {
                 //Unmuted member
-                info(event, "Member '%s' has been unmuted", member.getEffectiveName());
-                event.reply(Util.createBotMessage(guild, "Member '%s' (%s) has been unmuted", member.getEffectiveName(), member.getRoles().get(0).getName()));
+                info(event, "%s has been unmuted", member.getEffectiveName());
+                reply(event, "%s (%s) has been unmuted", member.getEffectiveName(), member.getRoles().get(0).getName());
             }
             else
             {
                 //Member is not muted
-                warn(event, "Member '%s' is not muted", member.getEffectiveName());
-                event.reply(Util.createBotMessage(guild, "Member '%s' (%s) is not muted", member.getEffectiveName(), member.getRoles().get(0).getName()));
+                warn(event, "%s is not muted", member.getEffectiveName());
+                reply(event, "%s (%s) is not muted", member.getEffectiveName(), member.getRoles().get(0).getName());
             }
         }
     }

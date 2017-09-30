@@ -79,7 +79,7 @@ public class CommandMute extends CommandBase
         {
             //Member already muted
             long timeLeft = MuteHandler.getMutedTimeLeftMins(member);
-            fail(event, "Member '%s' is already muted for %s more minutes", member.getEffectiveName(), timeLeft);
+            fail(event, "%s is already muted for %s more minutes", member.getEffectiveName(), timeLeft);
         }
         else
         {
@@ -87,15 +87,15 @@ public class CommandMute extends CommandBase
             if(MuteHandler.muteMember(member, time))
             {
                 //Member muted
-                info(event, "Member '%s' has been muted for %s mins", member.getEffectiveName(), time);
-                event.reply(Util.createBotMessage(guild, "Member '%s' (%s) has been muted for %s mins", member.getEffectiveName(), memberMainRole, time));
+                info(event, "%s has been muted for %s mins", member.getEffectiveName(), time);
+                reply(event, "%s (%s) has been muted for %s mins", member.getEffectiveName(), memberMainRole, time);
             }
             else
             {
                 //Failed to mute member
                 long timeLeft = MuteHandler.getMutedTimeLeftMins(member);
-                warn(event, "Member '%s' is already muted for %s more minutes", member.getEffectiveName(), timeLeft);
-                event.reply(Util.createBotMessage(guild, "Failed to mute member '%s' (%s)", member.getEffectiveName(), memberMainRole));
+                warn(event, "%s is already muted for %s more minutes", member.getEffectiveName(), timeLeft);
+                reply(event, "Failed to mute member '%s' (%s)", member.getEffectiveName(), memberMainRole);
             }
         }
     }

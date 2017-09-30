@@ -74,7 +74,7 @@ public class TrafficManager extends ListenerAdapter
 
         //Record this message
         Date messageTimestamp = new Date(event.getMessage().getCreationTime().toEpochSecond() * 1000);
-        info("Adding message: %s -> '%s'", messageTimestamp, event.getMessage().getContent());
+        //debug("Adding message: %s -> '%s'", messageTimestamp, event.getMessage().getContent());
         if(!hasUser(event.getAuthor()))
             users.add(new DatedUser(event.getAuthor(), messageTimestamp));
         messages.add(messageTimestamp);
