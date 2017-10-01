@@ -2,6 +2,7 @@ package mdcbot.utils;
 
 import mdcbot.LogLevel;
 import mdcbot.MDCBot;
+import mdcbot.command.CommandBase;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
@@ -9,6 +10,7 @@ import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.time.Instant;
 import java.util.HashMap;
@@ -81,12 +83,25 @@ public class Util
         logChannel(level, null, text, args);
     }
 
+    public static Color getBotColour(Guild guild)
+    {
+        return guild == null ? Color.BLUE : guild.getMember(MDCBot.jda.getSelfUser()).getColor();
+    }
+
     /**
      * Creates an embedded message for the bot to send (uses the bot's main role colour)
      */
     public static MessageEmbed createBotMessage(Guild guild, String message, Object... args)
     {
-        return createEmbedMessage(guild.getMember(MDCBot.jda.getSelfUser()).getColor(), message, args);
+        return createEmbedMessage(getBotColour(guild), String.format(message, args), null);
+    }
+
+    /**
+     * Creates an embedded message for the bot to send (uses the bot's main role colour)
+     */
+    public static MessageEmbed createBotMessage(Guild guild, String title, String description, Object... args)
+    {
+        return createEmbedMessage(getBotColour(guild), title, String.format(description, args));
     }
 
     /**
@@ -94,17 +109,25 @@ public class Util
      */
     public static MessageEmbed createMemberMessage(Member member, String message, Object... args)
     {
-        return createEmbedMessage(member.getColor(), message, args);
+        return createEmbedMessage(member.getColor(), String.format(message, args), null);
+    }
+
+    public static MessageEmbed createUsageMessage(Guild guild, CommandBase command)
+    {
+        return createEmbedMessage(getBotColour(guild), command.getName() + " command usage:", command.getUsage());
     }
 
     /**
      * Creates a simple embedded message
      */
-    private static MessageEmbed createEmbedMessage(Color colour, String message, Object... args)
+    public static MessageEmbed createEmbedMessage(Color colour, @Nullable String title, @Nullable String description)
     {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setColor(colour);
-        builder.setTitle(String.format(message, args));
+        if(title != null)
+            builder.setTitle(title);
+        if(description != null)
+            builder.setDescription(description);
         return builder.build();
     }
 

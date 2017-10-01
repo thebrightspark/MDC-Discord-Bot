@@ -29,11 +29,18 @@ public abstract class CommandBase extends Command
 
     protected RolePermission rolePermission = RolePermission.NONE;
     protected boolean removeSentMessage = false;
+    protected String[] usages = {""};
 
     public CommandBase(String name, String help)
     {
         this.name = name;
         this.help = help;
+    }
+
+    public CommandBase(String name, String help, String... usages)
+    {
+        this(name, help);
+        this.usages = usages;
     }
 
     /**
@@ -45,9 +52,26 @@ public abstract class CommandBase extends Command
         return MDCBot.PREFIX + getName() + " ";
     }
 
-    protected String getUsage()
+    /**
+     * Returns a String built with:
+     * "[prefix][commandName] (usage)"
+     * This is not used automatically anywhere, but is available to use
+     */
+    public String getUsage()
     {
-        return getCommand();
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < usages.length; i++)
+        {
+            String usage = usages[i];
+            if(i > 0) sb.append("\n");
+            sb.append(getCommand()).append(usage);
+        }
+        return sb.toString();
+    }
+
+    public MessageEmbed getUsageEmbed(Guild guild)
+    {
+        return Util.createUsageMessage(guild, this);
     }
 
     @Override
@@ -73,9 +97,20 @@ public abstract class CommandBase extends Command
         event.getChannel().sendMessage(Util.createBotMessage(event.getGuild(), message, args)).queue();
     }
 
+    protected void reply(CommandEvent event, String title, String description, Object...args)
+    {
+        event.getChannel().sendMessage(Util.createBotMessage(event.getGuild(), title, String.format(description, args))).queue();
+    }
+
     protected void reply(CommandEvent event, MessageEmbed message)
     {
         event.getChannel().sendMessage(message).queue();
+    }
+
+    private void fail(CommandEvent event)
+    {
+        if(event.getClient().getListener() != null)
+            event.getClient().getListener().onTerminatedCommand(event, this);
     }
 
     /**
@@ -83,10 +118,17 @@ public abstract class CommandBase extends Command
      */
     protected void fail(CommandEvent event, @Nullable String message, Object... args)
     {
-        if(message != null)
-            reply(event, message, args);
-        if(event.getClient().getListener() != null)
-            event.getClient().getListener().onTerminatedCommand(event, this);
+        if(message != null) reply(event, message, args);
+        fail(event);
+    }
+
+    /**
+     * Call this method when a command fails at any point
+     */
+    protected void fail(CommandEvent event, MessageEmbed message)
+    {
+        if(message != null) reply(event, message);
+        fail(event);
     }
 
     /**

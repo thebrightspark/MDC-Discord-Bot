@@ -90,6 +90,7 @@ public class MDCBot
         //addCommand(new PingCommand());
         addCommand(new CommandHello());
         addCommand(new CommandConfig());
+        addCommand(new CommandUsage());
         addCommand(new CommandRandQuote());
         addCommand(new CommandManagePoints());
         addCommand(new CommandGetUsersList());
@@ -99,6 +100,7 @@ public class MDCBot
         addCommand(new CommandMute());
         addCommand(new CommandUnmute());
         addCommand(new CommandAnnounce());
+        addCommand(new CommandTimeZone());
         addCommand(new CommandShutdown());
         addCommand(new CommandDebug());
     }
@@ -208,6 +210,17 @@ public class MDCBot
             if(command.getName().equalsIgnoreCase(name))
                 return true;
         return false;
+    }
+
+    /**
+     * Gets the usage message if it exists
+     */
+    public static MessageEmbed getCommandUsage(Guild guild, String name)
+    {
+        for(Command command : commands)
+            if(command.getName().equalsIgnoreCase(name))
+                return command instanceof CommandBase ? ((CommandBase) command).getUsageEmbed(guild) : null;
+        return null;
     }
 
     public static User getUserByID(long userId)

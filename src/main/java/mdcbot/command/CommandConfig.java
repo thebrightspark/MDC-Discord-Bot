@@ -10,14 +10,8 @@ public class CommandConfig extends CommandBase
 {
     public CommandConfig()
     {
-        super("config", "Set config values");
+        super("config", "Set config values", "<configKey> <value>");
         rolePermission = RolePermission.ADMIN;
-    }
-
-    @Override
-    protected String getUsage()
-    {
-        return super.getUsage() + "<configKey> <value>";
     }
 
     @Override
@@ -26,7 +20,7 @@ public class CommandConfig extends CommandBase
         String[] mParts = Util.splitCommandArgs(event.getArgs());
         if(mParts.length < 2)
         {
-            fail(event, getUsage());
+            fail(event, getUsageEmbed(event.getGuild()));
             return;
         }
         EConfigs key = EConfigs.getByName(mParts[0]);
@@ -36,9 +30,8 @@ public class CommandConfig extends CommandBase
             return;
         }
         StringBuilder valueBuilder = new StringBuilder(mParts[1]);
-        if(mParts.length >= 2)
-            for(int i = 2; i < mParts.length; i++)
-                valueBuilder.append(" ").append(mParts[i]);
+        for(int i = 2; i < mParts.length; i++)
+            valueBuilder.append(" ").append(mParts[i]);
         String value = valueBuilder.toString();
 
         if(Config.has(key))

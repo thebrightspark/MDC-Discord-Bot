@@ -6,11 +6,10 @@ import mdcbot.MDCBot;
 import mdcbot.utils.Util;
 import mdcbot.io.FileManager;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.PermissionOverride;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -55,12 +54,12 @@ public class TrafficManager extends ListenerAdapter
     }
 
     @Override
-    public void onMessageReceived(MessageReceivedEvent event)
+    public void onGuildMessageReceived(GuildMessageReceivedEvent event)
     {
-        if(event.getChannelType() != ChannelType.TEXT || !(event.getChannel() instanceof TextChannel) || event.getAuthor().isBot())
+        if(event.getAuthor().isBot())
             return;
 
-        TextChannel channel = (TextChannel) event.getChannel();
+        TextChannel channel = event.getChannel();
         //Make sure the channel isn't restricted to certain roles (i.e. @everyone can read and write on this channel)
         for(PermissionOverride perm : channel.getRolePermissionOverrides())
         {
