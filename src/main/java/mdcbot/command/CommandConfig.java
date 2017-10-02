@@ -5,6 +5,7 @@ import mdcbot.Config;
 import mdcbot.EConfigs;
 import mdcbot.MDCBot;
 import mdcbot.utils.Util;
+import net.dv8tion.jda.core.EmbedBuilder;
 
 public class CommandConfig extends CommandBase
 {
@@ -18,6 +19,16 @@ public class CommandConfig extends CommandBase
     protected void doCommand(CommandEvent event)
     {
         String[] mParts = Util.splitCommandArgs(event.getArgs());
+        if(mParts.length == 1 && mParts[0].equalsIgnoreCase("list"))
+        {
+            //List all config keys
+            EmbedBuilder message = new EmbedBuilder().setTitle("Current Configs:");
+            for(EConfigs eConfig : EConfigs.values())
+                if(eConfig.canCommandModify)
+                    message.addField(eConfig.toString(), Config.get(eConfig), true);
+            reply(event, message.build());
+            return;
+        }
         if(mParts.length < 2)
         {
             fail(event, getUsageEmbed(event.getGuild()));
