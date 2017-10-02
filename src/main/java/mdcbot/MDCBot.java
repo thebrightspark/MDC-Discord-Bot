@@ -29,9 +29,6 @@ public class MDCBot
     /*
         JDA: https://github.com/DV8FromTheWorld/JDA
         Example: https://github.com/DV8FromTheWorld/JDA/blob/master/src/examples/java/MessageListenerExample.java
-
-        My Token: MzQ2NzQ0MDY2OTg3MjYxOTYy.DHOTrg.LlAqQw3ZdC8LT4fNhREcp-Ae0gM
-        My User ID: 106346651777507328
     */
 
     public static final String NAME = "MDCBot";
@@ -107,7 +104,9 @@ public class MDCBot
 
     public static void main(String... args)
     {
-        log.info("Initialising bot...");
+        log.info("\n=============================" +
+                 "\n====== Initialising Bot =====" +
+                 "\n=============================");
 
         Config.init();
         if(!Config.hasValue(EConfigs.OWNER_ID))
@@ -177,12 +176,20 @@ public class MDCBot
         List<Role> mutedRoles = jda.getRolesByName(Config.get(EConfigs.MUTED_ROLE), false);
         if(!mutedRoles.isEmpty()) mutedRole = mutedRoles.get(0);
 
+        User owner = jda.getUserById(Config.get(EConfigs.OWNER_ID));
+        if(owner != null)
+            log.info("The owner of this bot is " + owner.getName() + "#" + owner.getDiscriminator());
+        else
+            log.warn("The owner with ID " + Config.get(EConfigs.OWNER_ID) + " does not exist!");
+
         Config.save();
 
         TrafficManager.init();
         MuteHandler.init();
 
-        log.info("Initialisation complete");
+        log.info("\n=============================" +
+                 "\n== Initialisation Complete ==" +
+                 "\n=============================");
 
         FileChangeListener.watchFileForChanges(RULES_FILE);
     }
