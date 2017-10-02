@@ -88,6 +88,24 @@ public class Config
         return 0;
     }
 
+    /**
+     * Gets the config value, and then checks if it contains the String
+     */
+    public static boolean getContains(EConfigs configKey, String contains)
+    {
+        String value = get(configKey);
+        if(configKey.canHaveMultipleValues)
+        {
+            String[] values = value.split(",");
+            for(String v : values)
+                if(v.equalsIgnoreCase(contains))
+                    return true;
+        }
+        else
+            return value.equalsIgnoreCase(contains);
+        return false;
+    }
+
     private static String getInternal(EConfigs configKey)
     {
         return config.get(configKey.toString());

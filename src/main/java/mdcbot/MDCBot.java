@@ -4,10 +4,7 @@ import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
 import com.jagrosh.jdautilities.waiter.EventWaiter;
 import mdcbot.command.*;
-import mdcbot.listeners.FileChangeListener;
-import mdcbot.listeners.MutedListener;
-import mdcbot.listeners.TrafficManager;
-import mdcbot.listeners.UserJoinAndLeaveEvent;
+import mdcbot.listeners.*;
 import mdcbot.utils.Util;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
@@ -148,7 +145,8 @@ public class MDCBot
                             waiter,
                             new TrafficManager(),
                             new UserJoinAndLeaveEvent(),
-                            new MutedListener()
+                            new MutedListener(),
+                            new AutomodListener()
                     ).buildBlocking();
         }
         catch(LoginException | InterruptedException | RateLimitedException e)

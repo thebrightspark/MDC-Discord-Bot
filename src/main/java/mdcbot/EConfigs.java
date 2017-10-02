@@ -11,7 +11,12 @@ public enum EConfigs
     MOD_ROLES("Moderator", true, true, false),
     NEW_MEMBER_ROLE("New Recruit", true, false, false),
     MUTED_ROLE("Muted", true, false, false),
-    DEFAULT_MUTE_TIME("10", true, false, false);
+    DEFAULT_MUTE_TIME("10", true, false, false),
+    CHANNEL_LINK_BLACKLIST("", true, true, false),
+    CHANNEL_FILE_BLACKLIST("", true, true, false),
+    CHANNEL_SPAM_CHARACTERS_BLACKLIST("", true, true, false),
+    CHANNEL_SPAM_MESSAGES_BLACKLIST("", true, true, false),
+    CHANNEL_PROFANITY_BLACKLIST("", true, true, false);
 
     public final String defaultValue;
     public final boolean canCommandModify, canHaveMultipleValues, needsRestart;
