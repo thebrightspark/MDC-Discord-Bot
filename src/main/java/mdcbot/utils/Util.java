@@ -1,5 +1,7 @@
 package mdcbot.utils;
 
+import mdcbot.Config;
+import mdcbot.EConfigs;
 import mdcbot.LogLevel;
 import mdcbot.MDCBot;
 import mdcbot.command.CommandBase;
@@ -59,12 +61,17 @@ public class Util
         log(clazz, LogLevel.DEBUG, text, args);
     }
 
+    public static void trace(Class clazz, String text, Object... args)
+    {
+        log(clazz, LogLevel.TRACE, text, args);
+    }
+
     /**
      * Logs to the assigned log channel if it has been set
      */
     public static void logChannel(LogLevel level, User author, String text, Object... args)
     {
-        if(MDCBot.logChannel != null)
+        if(MDCBot.logChannel != null && level.isHigherThanOrEqualTo(Config.get(EConfigs.LOG_LEVEL)))
         {
             if(author == null)
                 author = MDCBot.jda.getSelfUser();

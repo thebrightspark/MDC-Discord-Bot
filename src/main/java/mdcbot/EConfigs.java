@@ -5,6 +5,7 @@ public enum EConfigs
     TOKEN("", false, false, false),
     OWNER_ID("", false, false, false),
     PREFIX("!", true, false, true),
+    LOG_LEVEL("debug", true, false, false),
     LOG_CHANNEL_NAME("logs", true, false, false),
     DISABLED_COMMANDS("", true, true, false),
     ADMIN_ROLES("Admin", true, true, false),

@@ -160,6 +160,11 @@ public abstract class CommandBase extends Command
         log(event, LogLevel.DEBUG, text, args);
     }
 
+    protected void trace(CommandEvent event, String text, Object... args)
+    {
+        log(event, LogLevel.TRACE, text, args);
+    }
+
     private boolean isAllowedToUseCommand(Member member)
     {
         switch(rolePermission)

@@ -144,7 +144,7 @@ public class MDCBot
                             client.build(),
                             waiter,
                             new TrafficManager(),
-                            new UserJoinAndLeaveEvent(),
+                            new UserJoinAndLeaveListener(),
                             new MutedListener(),
                             new AutomodListener()
                     ).buildBlocking();
@@ -154,7 +154,7 @@ public class MDCBot
             e.printStackTrace();
         }
 
-        users = UserJoinAndLeaveEvent.users;
+        users = UserJoinAndLeaveListener.users;
 
         /*users = jda.getUsers();
 
@@ -163,17 +163,27 @@ public class MDCBot
         }*/
 
         //Find logs channel
-        List<TextChannel> logChannels = jda.getTextChannelsByName(Config.get(EConfigs.LOG_CHANNEL_NAME), false);
-        if(!logChannels.isEmpty()) logChannel = logChannels.get(0);
+        String logChannelConfig = Config.get(EConfigs.LOG_CHANNEL_NAME);
+        if(!logChannelConfig.isEmpty())
+            logChannel = findTextChannel(logChannelConfig, "log");
+        else
+            log.warn("No log channel set in config!");
 
         //Find new member role
-        List<Role> newMemberRoles = jda.getRolesByName(Config.get(EConfigs.NEW_MEMBER_ROLE), false);
-        if(!newMemberRoles.isEmpty()) newMemberRole = newMemberRoles.get(0);
+        String newMemberRoleConfig = Config.get(EConfigs.NEW_MEMBER_ROLE);
+        if(!newMemberRoleConfig.isEmpty())
+            newMemberRole = findRole(newMemberRoleConfig, "new member");
+        else
+            log.warn("No new member role set in the config!");
 
         //Find muted role
-        List<Role> mutedRoles = jda.getRolesByName(Config.get(EConfigs.MUTED_ROLE), false);
-        if(!mutedRoles.isEmpty()) mutedRole = mutedRoles.get(0);
+        String mutedRoleConfig = Config.get(EConfigs.MUTED_ROLE);
+        if(!mutedRoleConfig.isEmpty())
+            mutedRole = findRole(mutedRoleConfig, "muted");
+        else
+            log.warn("No muted role set in the config!");
 
+        //Get the owner
         User owner = jda.getUserById(Config.get(EConfigs.OWNER_ID));
         if(owner != null)
             log.info("The owner of this bot is " + owner.getName() + "#" + owner.getDiscriminator());
@@ -190,6 +200,48 @@ public class MDCBot
                  "\n=============================");
 
         FileChangeListener.watchFileForChanges(RULES_FILE);
+    }
+
+    /**
+     * Finds a channel using an ID or name
+     */
+    private static TextChannel findTextChannel(String channel, String channelDescription)
+    {
+        TextChannel channelFound = null;
+        try
+        {
+            long channelId = Long.parseLong(channel);
+            channelFound = jda.getTextChannelById(channelId);
+            if(channelFound == null) log.warn("No " + channelDescription + " channel found with ID " + channel);
+        }
+        catch(NumberFormatException e)
+        {
+            List<TextChannel> channels = jda.getTextChannelsByName(channel, false);
+            if(!channels.isEmpty()) channelFound = channels.get(0);
+            else log.warn("No " + channelDescription + " channels found for '" + channel + "'");
+        }
+        return channelFound;
+    }
+
+    /**
+     * Finds a role using an ID or name
+     */
+    private static Role findRole(String role, String roleDescription)
+    {
+        Role roleFound = null;
+        try
+        {
+            long roleId = Long.parseLong(role);
+            roleFound = jda.getRoleById(roleId);
+            if(roleFound == null) log.warn("No " + roleDescription + " role found with ID " + role);
+        }
+        catch(NumberFormatException e)
+        {
+            List<Role> roles = jda.getRolesByName(role, false);
+            if(!roles.isEmpty()) roleFound = roles.get(0);
+            else log.warn("No " + roleDescription + " roles found for '" + role + "'");
+        }
+        return roleFound;
     }
 
     public static void reloadDisabledCommands()

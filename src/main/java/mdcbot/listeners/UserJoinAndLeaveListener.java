@@ -9,7 +9,7 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 import java.util.List;
 
-public class UserJoinAndLeaveEvent extends ListenerBase {
+public class UserJoinAndLeaveListener extends ListenerBase {
     public static List<User> users;
 
     @Override
