@@ -114,7 +114,7 @@ public class CommandTimeZone extends CommandBase
     @Override
     protected void doCommand(CommandEvent event)
     {
-        String[] args = Util.splitCommandArgs(event.getArgs());
+        String[] args = (String[]) Util.splitCommandArgs(event.getArgs()).toArray();
         LocalDateTime timeFrom = null;
         ZonedDateTime timeResult = null;
         ZoneId zoneFrom = null, zoneTo = null;

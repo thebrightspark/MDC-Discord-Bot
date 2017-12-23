@@ -13,14 +13,17 @@ import net.dv8tion.jda.core.entities.User;
 import org.apache.log4j.Logger;
 
 import javax.annotation.Nullable;
-import java.awt.*;
+import java.awt.Color;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Util
 {
     private static Map<Class, Logger> loggers = new HashMap<>();
+
+    public static boolean DEBUG = false;
 
     private static Logger getLoggerFromMap(Class clazz)
     {
@@ -146,8 +149,13 @@ public class Util
         return sb.toString();
     }
 
-    public static String[] splitCommandArgs(String args){
-        return args.split("\\s+");
+    public static List<String> splitCommandArgs(String args){
+        List<String> ret = new ArrayList<>();
+        Matcher mat = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(args);
+        while(mat.find()){
+            ret.add(mat.group(1));
+        }
+        return ret;
     }
 
     public static String getFullUser(User user)

@@ -3,6 +3,7 @@ package mdcbot.listeners;
 import mdcbot.DatedUser;
 import mdcbot.LogLevel;
 import mdcbot.MDCBot;
+import mdcbot.utils.SchedulerKt;
 import mdcbot.utils.Util;
 import mdcbot.io.FileManager;
 import net.dv8tion.jda.core.Permission;
@@ -36,21 +37,17 @@ public class TrafficManager extends ListenerAdapter
     private static float maxRatio = -1f;
     private static Date maxRatioDateMin, maxRatioDateMax;
     private static float lastRatio = -1f;
-    private static FileManager fm_users = new FileManager(MDCBot.SAVES_DIR,  MDCBot.TRAFFIC_USERS_FILE);
-    private static FileManager fm_messages = new FileManager(MDCBot.SAVES_DIR,  MDCBot.TRAFFIC_MESSAGES_FILE);
-    private static FileManager fm_maxratio = new FileManager(MDCBot.SAVES_DIR,  MDCBot.TRAFFIC_MAXRATIO_FILE);
+    private static FileManager fm_users = new FileManager(MDCBot.TRAFFIC_USERS_FILE);
+    private static FileManager fm_messages = new FileManager(MDCBot.TRAFFIC_MESSAGES_FILE);
+    private static FileManager fm_maxratio = new FileManager(MDCBot.TRAFFIC_MAXRATIO_FILE);
     private static boolean dataChanged = false;
 
     public static void init()
     {
         readFromFiles();
-
-        //Setup a thread to run every 30s to save the traffic data
-        ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1);
-        executorService.scheduleAtFixedRate(() ->
-        {
+        SchedulerKt.executeWithRate(()->{
             if(dataChanged) saveToFiles();
-        }, 10, 30, TimeUnit.SECONDS);
+        }, 10);
     }
 
     @Override

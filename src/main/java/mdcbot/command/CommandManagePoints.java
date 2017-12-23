@@ -1,9 +1,12 @@
 package mdcbot.command;
 
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
+import mdcbot.points.Player;
+import mdcbot.points.PlayerKt;
 import mdcbot.utils.Util;
-import mdcbot.points.UserPoints;
 import net.dv8tion.jda.core.entities.User;
+
+import java.util.Objects;
 
 public class CommandManagePoints extends CommandBase{
     public CommandManagePoints(){
@@ -12,32 +15,27 @@ public class CommandManagePoints extends CommandBase{
     }
 
     public void doCommand(CommandEvent event){
-        String[] args = Util.splitCommandArgs(event.getArgs());
-        boolean isMentioned = false;
+        String[] args = (String[])Util.splitCommandArgs(event.getArgs()).toArray();
         if(args[1].equals(event.getAuthor().getId())){
             event.reply("You cannot edit your own points!");
         }else {
-            for (User user : event.getJDA().getUsers()) {
-                if(args[1].equals(user.getAsMention())){
-                    isMentioned = true;
-                }
-                if (args.length == 3) {
-                    if (user.getId().equals(args[1]) || isMentioned) {
+            Player player = PlayerKt.readPlayerFromJson(args[1]);
+            if(player != null) {
+                if(player.getUser() != null) {
+                    if (player.getUser().getName().equals(args[1])) {
                         int points = Integer.parseInt(args[2]);
-                        UserPoints.addOrSubPoints(user, points, !args[0].equalsIgnoreCase("add") && args[0].equalsIgnoreCase("remove"));
-                        event.reply(user.getName() + " had " + points + " points " +
-                                (args[0].equalsIgnoreCase("add") ? "added" : (args[0].equalsIgnoreCase("remove") ? "removed" : null))
-                        );
-                        user.openPrivateChannel().queue((channel) -> channel.sendMessage("You now have " + UserPoints.getUsersPoints(user) + " points. If you think this is a problem, contact an admin.").queue());
-                    }
-                } else if (args.length == 2) {
-                    if (args[0].equalsIgnoreCase("get")) {
-                        if (user.getId().equals(args[1]) || isMentioned) {
-                            event.reply(user.getName() + " has " + UserPoints.getUsersPoints(user) + " points.");
+                        switch (args[0]) {
+                            case "add":
+                                player.setPoints(player.getPoints() + points);
+                                break;
+                            case "remove":
+                                player.setPoints(player.getPoints() - points);
+                                break;
+                            case "set":
+                                player.setPoints(points);
+                                break;
                         }
                     }
-                } else if(event.getArgs().isEmpty()){
-                    event.replyError("That doesn't tickle me jones. Please use points <get:add:remove> <user_id> [amount]");
                 }
             }
         }

@@ -18,7 +18,7 @@ public class CommandConfig extends CommandBase
     @Override
     protected void doCommand(CommandEvent event)
     {
-        String[] mParts = Util.splitCommandArgs(event.getArgs());
+        String[] mParts = (String[]) Util.splitCommandArgs(event.getArgs()).toArray();
         if(mParts.length == 1 && mParts[0].equalsIgnoreCase("list"))
         {
             //List all config keys

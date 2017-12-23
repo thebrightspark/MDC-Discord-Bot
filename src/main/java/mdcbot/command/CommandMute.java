@@ -38,7 +38,7 @@ public class CommandMute extends CommandBase
         int time = Config.getInt(EConfigs.DEFAULT_MUTE_TIME);
 
         //Try get the time from the first argument
-        String[] argSplit = Util.splitCommandArgs(args);
+        String[] argSplit = (String[]) Util.splitCommandArgs(args).toArray();
         boolean gotTimeFromArgs = false;
         if(argSplit.length > 1)
         {

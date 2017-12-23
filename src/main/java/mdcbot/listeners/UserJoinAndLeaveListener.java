@@ -1,13 +1,15 @@
 package mdcbot.listeners;
 
-import mdcbot.points.UserPoints;
+import mdcbot.points.Player;
+import mdcbot.points.PlayerKt;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 import java.util.List;
+
+import static mdcbot.points.PlayerKt.syncPointData;
 
 public class UserJoinAndLeaveListener extends ListenerBase {
     public static List<User> users;
@@ -15,18 +17,21 @@ public class UserJoinAndLeaveListener extends ListenerBase {
     @Override
     public void onReady(ReadyEvent event) {
         users = event.getJDA().getUsers();
-        UserPoints.init(event);
+        syncPointData();
     }
 
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
         users = event.getJDA().getUsers();
-        UserPoints.addOrSubPoints(event.getUser(), 5, false);
+        for(User user : users){
+            if(!PlayerKt.checkForPlayer(user)){
+                Player player = new Player(user, 0);
+            }
+        }
     }
 
     @Override
     public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
         users = event.getJDA().getUsers();
-        UserPoints.addOrSubPoints(event.getUser(), UserPoints.getUsersPoints(event.getUser()), true);
     }
 }

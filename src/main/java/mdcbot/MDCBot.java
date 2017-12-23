@@ -4,7 +4,12 @@ import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
 import com.jagrosh.jdautilities.waiter.EventWaiter;
 import mdcbot.command.*;
+import mdcbot.io.FileManager;
 import mdcbot.listeners.*;
+import mdcbot.points.Player;
+import mdcbot.points.PlayerKt;
+import mdcbot.utils.JsonUtilsKt;
+import mdcbot.utils.SchedulerKt;
 import mdcbot.utils.Util;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
@@ -34,14 +39,13 @@ public class MDCBot
 
     public static final File RESOURCES_DIR = new File("src/main/resources");
     public static final File SAVES_DIR = new File("saves");
-    public static final File RULES_DIR = new File("rules");
     public static final File LOG4J_PROPERTIES_FILE = new File(RESOURCES_DIR, "log4j.properties");
     public static final File CONFIG_FILE = Paths.get("config.properties").toFile();
-    public static final File USER_POINTS_FILE = new File(SAVES_DIR, "user_points.txt");
     public static final File TRAFFIC_USERS_FILE = new File(SAVES_DIR, "traffic_users.txt");
     public static final File TRAFFIC_MESSAGES_FILE = new File(SAVES_DIR, "traffic_messages.txt");
     public static final File TRAFFIC_MAXRATIO_FILE = new File(SAVES_DIR, "traffic_maxratio.txt");
-    public static final File RULES_FILE = new File(RULES_DIR,"rules.txt");
+    public static final File RULES_FILE = new File("misc/rules.json");
+    public static final File POINTS_FILE = new File("misc/points.json");
 
     public static JDA jda;
     public static String PREFIX;
@@ -79,24 +83,34 @@ public class MDCBot
             log.info("Added command '" + command.getName() + "'");
     }
 
+    private static void addCommands(Command[] commands){
+        for(Command command : commands){
+            addCommand(command);
+        }
+    }
+
     public static void initCommands()
     {
         //addCommand(new PingCommand());
-        addCommand(new CommandHello());
-        addCommand(new CommandConfig());
-        addCommand(new CommandUsage());
-        addCommand(new CommandRandQuote());
-        addCommand(new CommandManagePoints());
-        addCommand(new CommandGetUsersList());
-        addCommand(new CommandTraffic());
-        addCommand(new CommandAcceptRules());
-        addCommand(new CommandGetRolesList());
-        addCommand(new CommandMute());
-        addCommand(new CommandUnmute());
-        addCommand(new CommandAnnounce());
-        addCommand(new CommandTimeZone());
-        addCommand(new CommandShutdown());
-        addCommand(new CommandDebug());
+        addCommands(new Command[]{
+                new CommandHello(),
+                new CommandConfig(),
+                new CommandUsage(),
+                new CommandRandQuote(),
+                new CommandManagePoints(),
+                new CommandGetUsersList(),
+                new CommandTraffic(),
+                new CommandAcceptRules(),
+                new CommandGetRolesList(),
+                new CommandMute(),
+                new CommandUnmute(),
+                new CommandAnnounce(),
+                new CommandTimeZone(),
+                new CommandShutdown(),
+                new CommandDebug(),
+                new CommandRules()
+            }
+        );
     }
 
     public static void main(String... args)
@@ -156,11 +170,8 @@ public class MDCBot
 
         users = UserJoinAndLeaveListener.users;
 
-        /*users = jda.getUsers();
-
-        for(User user : users){
-            UserPoints.addOrSubPoints(user, 5, false);
-        }*/
+        PlayerKt.initPlayers();
+//        JsonUtilsKt.getPointsJsonHandler().refreshJson();
 
         //Find logs channel
         String logChannelConfig = Config.get(EConfigs.LOG_CHANNEL_NAME);
@@ -199,7 +210,7 @@ public class MDCBot
                  "\n== Initialisation Complete ==" +
                  "\n=============================");
 
-        FileChangeListener.watchFileForChanges(RULES_FILE);
+        JsonUtilsKt.getRulesJsonHandler().watchFileForChanges();
     }
 
     /**
