@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import mdcbot.MDCBot
 import mdcbot.command.Rules
+import mdcbot.listeners.PlayerTrafficData
+import mdcbot.listeners.readFromFiles
+import mdcbot.listeners.saveToFiles
 import java.awt.Color
 import java.io.File
 
@@ -12,8 +15,9 @@ val objmapper: ObjectMapper = ObjectMapper()
 val refreshQueue = ArrayList<Any>()
 
 val rulesJsonHandler = RulesJsonHandler()
+val trafficJsonHandler = TrafficJsonHandler()
 
-abstract class JsonHandler(val file: File){
+abstract class JsonHandler<out T>(val file: File, private val objectType: Class<T>){
     protected var lastModified: Long = 0
     
     init{
@@ -39,8 +43,8 @@ abstract class JsonHandler(val file: File){
         objmapper.writeValue(file, obj)
     }
     
-    fun <T : Any> readFromJson(type: Class<T>): T{
-        return objmapper.readValue(file, type)
+    fun readFromJson(): T{
+        return objmapper.readValue(file, objectType)
     }
     
     fun getListOfObjectsFromJson(): JsonNode?{
@@ -56,7 +60,7 @@ abstract class JsonHandler(val file: File){
     abstract fun execute()
 }
 
-class RulesJsonHandler : JsonHandler(MDCBot.RULES_FILE){
+class RulesJsonHandler : JsonHandler<Rules>(MDCBot.RULES_FILE, Rules::class.java){
     override fun execute() {
         if(Rules.rules.isEmpty()) {
             getListOfObjectsFromJson()?.elements()?.forEach {
@@ -65,28 +69,37 @@ class RulesJsonHandler : JsonHandler(MDCBot.RULES_FILE){
                 }
             }
         }
-        if (file.lastModified() != lastModified) {
-            val sb = StringBuilder()
-            Rules.rules.forEach{
-                sb.append(it)
-                sb.append("\n")
-            }
-            val contents = sb.toString()
-            MDCBot.users
-                    .filterNot {
-                        it.isBot
-                    }
-                    .forEach {
-                        it.openPrivateChannel().queue {
-                            privateChannel ->
-                                run{
+        if(Rules.changed) {
+            if (file.lastModified() != lastModified) {
+                val sb = StringBuilder()
+                Rules.rules.forEach {
+                    sb.append(it)
+                    sb.append("\n")
+                }
+                val contents = sb.toString()
+                MDCBot.users
+                        .filterNot {
+                            it.isBot
+                        }
+                        .forEach {
+                            it.openPrivateChannel().queue { privateChannel ->
+                                run {
                                     println("Sending message to: $it!")
                                     privateChannel.sendMessage(Util.createEmbedMessage(Color.MAGENTA, "Updated Rules", contents)).queue()
                                 }
+                            }
                         }
-                    }
-            lastModified = file.lastModified()
+                lastModified = file.lastModified()
+                Rules.changed = false
+            }
         }
     }
-    
+}
+
+class TrafficJsonHandler : JsonHandler<PlayerTrafficData>(MDCBot.TRAFFIC_FILE, PlayerTrafficData::class.java){
+    override fun execute() {
+        readFromFiles()
+        if (MDCBot.trafficManager.trafficData.dataChanged)
+            saveToFiles()
+    }
 }

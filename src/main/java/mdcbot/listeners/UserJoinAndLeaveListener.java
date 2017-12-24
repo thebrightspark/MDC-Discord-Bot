@@ -26,6 +26,7 @@ public class UserJoinAndLeaveListener extends ListenerBase {
         for(User user : users){
             if(!PlayerKt.checkForPlayer(user)){
                 Player player = new Player(user, 0);
+
             }
         }
     }

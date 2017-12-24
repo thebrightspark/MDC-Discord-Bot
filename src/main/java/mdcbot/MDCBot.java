@@ -41,11 +41,9 @@ public class MDCBot
     public static final File SAVES_DIR = new File("saves");
     public static final File LOG4J_PROPERTIES_FILE = new File(RESOURCES_DIR, "log4j.properties");
     public static final File CONFIG_FILE = Paths.get("config.properties").toFile();
-    public static final File TRAFFIC_USERS_FILE = new File(SAVES_DIR, "traffic_users.txt");
-    public static final File TRAFFIC_MESSAGES_FILE = new File(SAVES_DIR, "traffic_messages.txt");
-    public static final File TRAFFIC_MAXRATIO_FILE = new File(SAVES_DIR, "traffic_maxratio.txt");
     public static final File RULES_FILE = new File("misc/rules.json");
     public static final File POINTS_FILE = new File("misc/points.json");
+    public static final File TRAFFIC_FILE = new File("misc/traffic.json");
 
     public static JDA jda;
     public static String PREFIX;
@@ -53,6 +51,7 @@ public class MDCBot
     public static Role newMemberRole;
     public static Role mutedRole;
     public static EventWaiter waiter = new EventWaiter();
+    public static TrafficManager trafficManager = new TrafficManager();
 
     private static Logger log = Util.getLogger(MDCBot.class);
     private static List<Command> commands = new ArrayList<>();
@@ -157,7 +156,7 @@ public class MDCBot
                     .addEventListener(
                             client.build(),
                             waiter,
-                            new TrafficManager(),
+                            trafficManager,
                             new UserJoinAndLeaveListener(),
                             new MutedListener(),
                             new AutomodListener()
@@ -202,15 +201,13 @@ public class MDCBot
             log.warn("The owner with ID " + Config.get(EConfigs.OWNER_ID) + " does not exist!");
 
         Config.save();
-
-        TrafficManager.init();
         MuteHandler.init();
+        JsonUtilsKt.getRulesJsonHandler().watchFileForChanges();
 
         log.info("\n=============================" +
                  "\n== Initialisation Complete ==" +
                  "\n=============================");
 
-        JsonUtilsKt.getRulesJsonHandler().watchFileForChanges();
     }
 
     /**

@@ -1,8 +1,10 @@
 package mdcbot.points
 
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.node.ArrayNode
+import mdcbot.DatedUser
+import mdcbot.listeners.PlayerTrafficData
 import mdcbot.utils.*
+import net.dv8tion.jda.core.entities.Message
 import net.dv8tion.jda.core.entities.User
 import java.util.*
 
@@ -20,6 +22,10 @@ fun initPlayers(){
 }
 
 data class Player(val user: User?, var points: Int)
+
+data class DatedPlayer(val datedUser: DatedUser, val player: Player)
+
+data class PlayerMessage(val player: Player, val date: Date, val message: Message)
 
 fun readPlayerFromJson(name: String): Player?{
 //    val data = readFromJson(Player::class.java)
@@ -46,10 +52,17 @@ fun writePlayerToJson(player: Player){
 }
 
 fun checkForPlayer(user: User): Boolean{
-    for(player in players){
-        if(player.user == user) return true
+    if(getPlayerWithUser(user) != null){
+        return true
     }
     return false
+}
+
+fun getPlayerWithUser(user: User): Player?{
+    for(player in players){
+        if(player.user == user) return player
+    }
+    return null
 }
 
 fun syncPointData(){
